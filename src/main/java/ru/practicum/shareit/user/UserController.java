@@ -18,6 +18,7 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
