@@ -2,19 +2,20 @@ package ru.practicum.shareit.user.model;
 
 import lombok.Data;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 /**
  * TODO Sprint add-controllers.
  */
 @Data
 public class User {
-    long id;
+    private long id;
+    @NotEmpty(message = "Имя пользователя не может быть null")
     @Size(min = 1, max = 30)
-    String name;
+    private String name;
+    @NotEmpty(message = "email не может быть null")
     @Email
-    String email;
+    private String email;
 
     public User(long id, String name, String email) {
         this.id = id;

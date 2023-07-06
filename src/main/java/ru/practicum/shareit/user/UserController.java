@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.model.User;
 
+import javax.validation.Valid;
+import java.util.List;
+
 /**
  * TODO Sprint add-controllers.
  */
@@ -17,29 +20,36 @@ public class UserController {
     private UserService userService;
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
         log.info("Принят запрос на создание пользователя с параметрами: {}", user);
         return userService.createUser(user);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping
-    public void deleteUser(@RequestParam Long id) {
-        log.info("Принят запрос на удаление пользователя с id = {}", id);
-        userService.removeUser(id);
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable long userId) {
+        log.info("Принят запрос на удаление пользователя с id = {}", userId);
+        userService.removeUser(userId);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping
-    public User updateUser(@RequestBody User user) {
-        log.info("Принят запрос на обновление пользователя с id = {}", user.getId());
-        return userService.updateUser(user);
+    @PatchMapping("/{userId}")
+    public User updateUser(@RequestBody User user, @PathVariable long userId) {
+        log.info("Принят запрос на обновление пользователя с id = {}", userId);
+        return userService.updateUser(user, userId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{userId}")
+    public User getUser(@PathVariable long userId) {
+        log.info("Принят запрос на получение пользователя с id = {}", userId);
+        return userService.getUser(userId);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public User getUser(@RequestParam Long id) {
-        log.info("Принят запрос на получение пользователя с id = {}", id);
-        return userService.getUser(id);
+    public List<User> getUsers() {
+        log.info("Принят запрос на получение списка пользователей.");
+        return userService.getUsers();
     }
 }

@@ -1,58 +1,42 @@
 package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.user.dao.UserDao;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.HashMap;
+import java.util.List;
 
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
-    private final HashMap <Long, User> users = new HashMap<>();
-    private static Long currentId = 0L;
+    @Autowired
+    UserDao userDao;
 
     public User createUser(User user) {
-        user.setId(generateId());
-        users.put(user.getId(), user);
-        log.info("Создан пользователь id = {}", user.getId());
-        return user;
+        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+            log.info("Невозможно создать пользователя {}, некорректный email.", user.getName());
+            throw new ValidationException(
+                    String.format("Невозможно создать пользователя %s, некорректный email.", user.getName()));
+        }
+        return userDao.createUser(user);
     }
 
     public void removeUser(Long id) {
-        User removedUser = users.remove(id);
-        if (removedUser != null) {
-            log.info("Пользователь с id = {} удалён.", id);
-        } else {
-            log.info("Невозможно удалить. Пользователь с id = {} не найден.", id);
-            throw new NotFoundException("Невозможно удалить. Пользователь с id = " + id + " не найден.");
-        }
+        userDao.removeUser(id);
     }
 
-    public User updateUser(User user) {
-        User updatedUser = users.replace(user.getId(), user);
-        if (updatedUser != null) {
-            log.info("Пользователь с id = {} обновлён.", user.getId());
-            return updatedUser;
-        } else {
-            log.info("Невозможно обновить. Пользователь с id = {} не найден.", user.getId());
-            throw new NotFoundException("Невозможно обновить. Пользователь с id = " + user.getId() + " не найден.");
-        }
+    public User updateUser(User user, long userId) {
+        return userDao.updateUser(user, userId);
     }
 
     public User getUser(Long id) {
-        User user = users.get(id);
-        if (user != null) {
-            log.info("Пользователь с id = {} выгружен.", user.getId());
-            return user;
-        } else {
-            log.info("Невозможно выгрузить. Пользователь с id = {} не найден.", id);
-            throw new NotFoundException("Невозможно выгрузить. Пользователь с id = " + id + " не найден.");
-        }
+        return userDao.getUser(id);
     }
 
-    private Long generateId() {
-        return ++currentId;
+    public List<User> getUsers() {
+        return userDao.getUsers();
     }
 }
