@@ -39,37 +39,34 @@ public class ItemDao {
             items.replace(itemId, updatedItem);
             returnValue = items.get(itemId);
         }
-        if (returnValue != null) {
-            log.info("Обновлён item с id = {}, владелец - {}.", itemId, userId);
-            return returnValue;
-        } else {
+        if (returnValue == null) {
             log.info("Не найден item с id = {}, у которого владелец - user {}.", itemId, userId);
             throw new NotFoundException(String.format("Не найден item с id = %s, у которого владелец - user %s.", itemId, userId));
         }
+        log.info("Обновлён item с id = {}, владелец - {}.", itemId, userId);
+        return returnValue;
     }
 
     public Item getItem(long itemId) {
         Item item = items.get(itemId);
-        if (item != null) {
-            log.info("Выгружен item с id = {}, владелец - user {}", itemId, item.getOwner());
-            return item;
-        } else {
+        if (item == null) {
             log.info("Не найден item с id = {}", itemId);
             throw new NotFoundException(String.format("Не найден item с id = %s.", itemId));
         }
+        log.info("Выгружен item с id = {}, владелец - user {}", itemId, item.getOwner());
+        return item;
     }
 
     public List<Item> getItems(long userId) {
         List<Item> itemList = items.values().stream()
                 .filter(item -> item.getOwner() == userId)
                 .collect(Collectors.toList());
-        if (!itemList.isEmpty()) {
-            log.info("Выгружен список item, принадлежащих user {} размером {} записей", userId, itemList.size());
-            return itemList;
-        } else {
+        if (itemList.isEmpty()) {
             log.info("Не найдены item, принадлежащих user {}.", userId);
             throw new NotFoundException(String.format("Не найдены item, принадлежащих user %s.", userId));
         }
+        log.info("Выгружен список item, принадлежащих user {} размером {} записей", userId, itemList.size());
+        return itemList;
     }
 
     public List<Item> searchItems(String text) {
@@ -78,13 +75,12 @@ public class ItemDao {
                         || item.getDescription().toLowerCase().contains(text.toLowerCase()))
                 .filter(Item::getAvailable)
                 .collect(Collectors.toList());
-        if (!itemList.isEmpty()) {
-            log.info("Выгружен список item по запросу: '{}' размером {} записей", text, itemList.size());
-            return itemList;
-        } else {
+        if (itemList.isEmpty()) {
             log.info("Не найдены item по запросу: '{}'.", text);
             throw new NotFoundException(String.format("Не найдены item по запросу: '%s'", text));
         }
+        log.info("Выгружен список item по запросу: '{}' размером {} записей", text, itemList.size());
+        return itemList;
     }
 
     private Long generateId() {

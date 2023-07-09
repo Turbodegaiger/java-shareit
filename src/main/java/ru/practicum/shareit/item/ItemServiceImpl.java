@@ -10,7 +10,7 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserDao;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,21 +18,20 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ItemServiceImpl implements ItemService {
     @Autowired
-    ItemDao itemDao;
+    private ItemDao itemDao;
     @Autowired
-    UserDao userDao;
+    private UserDao userDao;
 
     @Override
     public ItemDto createItem(ItemDto item, long userId) {
         Item newItem = ItemMapper.toItem(item, userId);
         userDao.getUser(newItem.getOwner());
-        if (!newItem.getName().isBlank() || newItem.getName() != null) {
-            Item returnValue = itemDao.createItem(newItem);
-            return ItemMapper.toItemDto(returnValue);
-        } else {
+        if (newItem.getName() == null || newItem.getName().isBlank()) {
             log.info("Невозможно создать item. Отсутствует имя или владелец.");
             throw new ValidationException("Невозможно создать item. Отсутствует имя или владелец.");
         }
+        Item returnValue = itemDao.createItem(newItem);
+        return ItemMapper.toItemDto(returnValue);
     }
 
     @Override
@@ -55,9 +54,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> searchItems(String text) {
-        if (text.isBlank()) {
-            log.info("Выгружен список item по запросу: '{}' размером 0 записей", text);
-            return new ArrayList<>();
+        if (text == null || text.isBlank()) {
+            log.info("Текст запроса пуст. Выгружен список item по запросу: '{}' размером 0 записей", text);
+            return Collections.emptyList();
         }
         return itemDao.searchItems(text).stream()
                 .map(ItemMapper::toItemDto)

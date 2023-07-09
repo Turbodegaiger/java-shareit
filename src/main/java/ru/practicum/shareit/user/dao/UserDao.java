@@ -6,42 +6,37 @@ import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Component
 @Slf4j
 public class UserDao {
     private final HashMap<Long, User> users = new HashMap<>();
+    private final Set<String> emailUniqSet = new HashSet<>();
     private static Long currentId = 0L;
 
     public User createUser(User user) {
-        List<User> userList = users.values().stream()
-                        .filter(user1 -> user1.getEmail().equals(user.getEmail()))
-                        .collect(Collectors.toList());
-        if (userList.isEmpty()) {
-            user.setId(generateId());
-            users.put(user.getId(), user);
-            User returnValue = users.get(user.getId());
-            log.info("Создан пользователь id = {} с email {}.", user.getId(), user.getEmail());
-            return returnValue;
-        } else {
+        if (emailUniqSet.contains(user.getEmail())) {
             log.info("Невозможно создать пользователя {}, email {} уже существует.", user.getName(), user.getEmail());
             throw new AlreadyExistsException(
                     String.format("Невозможно создать пользователя %s, email %s уже существует.", user.getName(), user.getEmail()));
         }
+        user.setId(generateId());
+        users.put(user.getId(), user);
+        emailUniqSet.add(user.getEmail());
+        User returnValue = users.get(user.getId());
+        log.info("Создан пользователь id = {} с email {}.", user.getId(), user.getEmail());
+        return returnValue;
     }
 
     public User removeUser(Long id) {
         User removedUser = users.remove(id);
-        if (removedUser != null) {
-            log.info("Пользователь с id = {} удалён.", id);
-        } else {
+        if (removedUser == null) {
             log.info("Невозможно удалить. Пользователь с id = {} не найден.", id);
             throw new NotFoundException("Невозможно удалить. Пользователь с id = " + id + " не найден.");
         }
+        emailUniqSet.remove(removedUser.getEmail());
+        log.info("Пользователь с id = {} удалён.", id);
         return removedUser;
     }
 
@@ -53,36 +48,32 @@ public class UserDao {
         }
         String newName = user.getName();
         String newEmail = user.getEmail();
-        List<User> sameEmail = users.values().stream()
-                .filter(user1 -> user1.getEmail().equals(newEmail))
-                .filter(user1 -> !user1.getEmail().equals(updatedUser.getEmail()))
-                .collect(Collectors.toList());
-        if (sameEmail.isEmpty()) {
-            if (newName != null && !newName.equals("")) {
-                updatedUser.setName(user.getName());
-            }
-            if (newEmail != null && newEmail.contains("@")) {
-                updatedUser.setEmail(user.getEmail());
-            }
-            users.replace(userId, updatedUser);
-            User returnValue = users.get(userId);
-            log.info("Пользователь с id = {} обновлён.", userId);
-            return returnValue;
-        } else {
+        if (emailUniqSet.contains(newEmail) && !newEmail.equals(updatedUser.getEmail())) {
             log.info("Обновление невозможно: пользователь с email {} уже существует.", newEmail);
             throw new AlreadyExistsException("Обновление невозможно: пользователь с email " + newEmail + " уже существует.");
         }
+        if (newName != null && !newName.equals("")) {
+            updatedUser.setName(newName);
+        }
+        if (newEmail != null && newEmail.contains("@")) {
+            emailUniqSet.remove(updatedUser.getEmail());
+            emailUniqSet.add(newEmail);
+            updatedUser.setEmail(newEmail);
+        }
+        users.replace(userId, updatedUser);
+        User returnValue = users.get(userId);
+        log.info("Пользователь с id = {} обновлён.", userId);
+        return returnValue;
     }
 
     public User getUser(Long id) {
         User user = users.get(id);
-        if (user != null) {
-            log.info("Пользователь с id = {} выгружен.", user.getId());
-            return user;
-        } else {
+        if (user == null) {
             log.info("Невозможно выгрузить. Пользователь с id = {} не найден.", id);
             throw new NotFoundException("Невозможно выгрузить. Пользователь с id = " + id + " не найден.");
         }
+        log.info("Пользователь с id = {} выгружен.", user.getId());
+        return user;
     }
 
     public List<User> getUsers() {

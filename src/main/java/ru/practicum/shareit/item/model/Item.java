@@ -6,9 +6,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
 public class Item {
     private long id;
@@ -22,7 +19,6 @@ public class Item {
     private Boolean available;
     @NotNull(message = "Владелец не может быть null")
     private Long owner;
-    private long request;
 
     public Item(long id, String name, String description, Boolean available, Long owner) {
         this.id = id;

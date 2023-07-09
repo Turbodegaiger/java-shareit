@@ -10,21 +10,19 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
 @Slf4j
 public class ItemController {
+    private final static String USER_ID_HEADER = "X-Sharer-User-Id";
     @Autowired
     private ItemService itemService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemDto createItem(@Valid @RequestBody ItemDto item,
-                              @RequestHeader("X-Sharer-User-Id") long userId) {
+                              @RequestHeader(USER_ID_HEADER) long userId) {
         log.info("Принят запрос на создание item.");
         return itemService.createItem(item, userId);
     }
@@ -33,7 +31,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.OK)
     public ItemDto updateItem(@RequestBody ItemDto item,
                               @PathVariable long itemId,
-                              @RequestHeader("X-Sharer-User-Id") long userId) {
+                              @RequestHeader(USER_ID_HEADER) long userId) {
         log.info("Принят запрос на изменения item id = {}.", itemId);
         return itemService.updateItem(item, itemId, userId);
     }
@@ -47,7 +45,7 @@ public class ItemController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDto> getItems(@RequestHeader(USER_ID_HEADER) long userId) {
         log.info("Принят запрос на получение всех item.");
         return itemService.getItems(userId);
     }
