@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemController {
-    private final static String USER_ID_HEADER = "X-Sharer-User-Id";
+    private final String USER_ID_HEADER = "X-Sharer-User-Id";
     @Autowired
     private ItemService itemService;
 
