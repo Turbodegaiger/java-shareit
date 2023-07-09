@@ -15,14 +15,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemController {
-    private final String USER_ID_HEADER = "X-Sharer-User-Id";
+    private final String userIdHeader = "X-Sharer-User-Id";
     @Autowired
     private ItemService itemService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemDto createItem(@Valid @RequestBody ItemDto item,
-                              @RequestHeader(USER_ID_HEADER) long userId) {
+                              @RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на создание item.");
         return itemService.createItem(item, userId);
     }
@@ -31,7 +31,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.OK)
     public ItemDto updateItem(@RequestBody ItemDto item,
                               @PathVariable long itemId,
-                              @RequestHeader(USER_ID_HEADER) long userId) {
+                              @RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на изменения item id = {}.", itemId);
         return itemService.updateItem(item, itemId, userId);
     }
@@ -45,7 +45,7 @@ public class ItemController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> getItems(@RequestHeader(USER_ID_HEADER) long userId) {
+    public List<ItemDto> getItems(@RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на получение всех item.");
         return itemService.getItems(userId);
     }
