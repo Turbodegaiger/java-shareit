@@ -18,8 +18,17 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
+    public UserDto createUser(@Valid @RequestBody User user) {
         log.info("Принят запрос на создание пользователя с параметрами: {}", user);
+        return userService.createUser(user);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/test")
+    public UserDto createUserTest() {
+        User user = new User();
+        user.setName("babai");
+        user.setName("babaika@ya.ru");
         return userService.createUser(user);
     }
 
@@ -32,21 +41,21 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{userId}")
-    public User updateUser(@RequestBody User user, @PathVariable long userId) {
+    public UserDto updateUser(@RequestBody User user, @PathVariable long userId) {
         log.info("Принят запрос на обновление пользователя с id = {}", userId);
         return userService.updateUser(user, userId);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{userId}")
-    public User getUser(@PathVariable long userId) {
+    public UserDto getUser(@PathVariable long userId) {
         log.info("Принят запрос на получение пользователя с id = {}", userId);
         return userService.getUser(userId);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<User> getUsers() {
+    public List<UserDto> getUsers() {
         log.info("Принят запрос на получение списка пользователей.");
         return userService.getUsers();
     }

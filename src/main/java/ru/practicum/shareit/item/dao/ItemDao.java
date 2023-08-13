@@ -19,13 +19,13 @@ public class ItemDao {
     public Item createItem(@Valid Item item) {
         item.setId(generateId());
         items.put(item.getId(), item);
-        log.info("Создан item {} с id = {}.", item.getName(), item.getId());
+        log.info("Создан itemId {} с id = {}.", item.getName(), item.getId());
         return items.get(item.getId());
     }
 
     public Item updateItem(Item item, long itemId, long userId) {
         Item returnValue = null;
-        if (items.containsKey(itemId) && items.get(itemId).getOwner() == userId) {
+        if (items.containsKey(itemId) && items.get(itemId).getOwner().getId() == userId) {
             Item updatedItem = items.get(itemId);
             if (item.getName() != null && !item.getName().isBlank()) {
                 updatedItem.setName(item.getName());
@@ -40,32 +40,32 @@ public class ItemDao {
             returnValue = items.get(itemId);
         }
         if (returnValue == null) {
-            log.info("Не найден item с id = {}, у которого владелец - user {}.", itemId, userId);
-            throw new NotFoundException(String.format("Не найден item с id = %s, у которого владелец - user %s.", itemId, userId));
+            log.info("Не найден itemId с id = {}, у которого владелец - user {}.", itemId, userId);
+            throw new NotFoundException(String.format("Не найден itemId с id = %s, у которого владелец - user %s.", itemId, userId));
         }
-        log.info("Обновлён item с id = {}, владелец - {}.", itemId, userId);
+        log.info("Обновлён itemId с id = {}, владелец - {}.", itemId, userId);
         return returnValue;
     }
 
     public Item getItem(long itemId) {
         Item item = items.get(itemId);
         if (item == null) {
-            log.info("Не найден item с id = {}", itemId);
-            throw new NotFoundException(String.format("Не найден item с id = %s.", itemId));
+            log.info("Не найден itemId с id = {}", itemId);
+            throw new NotFoundException(String.format("Не найден itemId с id = %s.", itemId));
         }
-        log.info("Выгружен item с id = {}, владелец - user {}", itemId, item.getOwner());
+        log.info("Выгружен itemId с id = {}, владелец - user {}", itemId, item.getOwner());
         return item;
     }
 
     public List<Item> getItems(long userId) {
         List<Item> itemList = items.values().stream()
-                .filter(item -> item.getOwner() == userId)
+                .filter(item -> item.getOwner().getId() == userId)
                 .collect(Collectors.toList());
         if (itemList.isEmpty()) {
-            log.info("Не найдены item, принадлежащих user {}.", userId);
-            throw new NotFoundException(String.format("Не найдены item, принадлежащих user %s.", userId));
+            log.info("Не найдены itemId, принадлежащих user {}.", userId);
+            throw new NotFoundException(String.format("Не найдены itemId, принадлежащих user %s.", userId));
         }
-        log.info("Выгружен список item, принадлежащих user {} размером {} записей", userId, itemList.size());
+        log.info("Выгружен список itemId, принадлежащих user {} размером {} записей", userId, itemList.size());
         return itemList;
     }
 
@@ -76,10 +76,10 @@ public class ItemDao {
                 .filter(Item::getAvailable)
                 .collect(Collectors.toList());
         if (itemList.isEmpty()) {
-            log.info("Не найдены item по запросу: '{}'.", text);
-            throw new NotFoundException(String.format("Не найдены item по запросу: '%s'", text));
+            log.info("Не найдены itemId по запросу: '{}'.", text);
+            throw new NotFoundException(String.format("Не найдены itemId по запросу: '%s'", text));
         }
-        log.info("Выгружен список item по запросу: '{}' размером {} записей", text, itemList.size());
+        log.info("Выгружен список itemId по запросу: '{}' размером {} записей", text, itemList.size());
         return itemList;
     }
 

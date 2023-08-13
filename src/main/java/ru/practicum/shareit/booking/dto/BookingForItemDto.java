@@ -4,17 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.enums.BookingStatus;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.UserDto;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingDto {
+public class BookingForItemDto {
     long id;
     String start;
     String end;
-    ItemDto item;
-    UserDto booker;
+    long itemId;
+    long bookerId;
     BookingStatus status;
 }

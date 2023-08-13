@@ -1,28 +1,51 @@
 package ru.practicum.shareit.booking.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.shareit.booking.BookingStatus;
+import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.enums.BookingStatus;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-/**
- * TODO Sprint add-bookings.
- */
 @Data
+@Entity
+@Table(name = "bookings")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Booking {
-    long id;
-    LocalDateTime start;
-    LocalDateTime end;
-    long item;
-    long booker;
-    BookingStatus status;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @NotNull
+    @Column(name = "start_datetime")
+    private LocalDateTime start;
+    @NotNull
+    @Column(name = "end_datetime")
+    private LocalDateTime end;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
+    private Item item;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booker_id")
+    private User booker;
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
 
-    public Booking(long id, LocalDateTime start, LocalDateTime end, long item, long booker, BookingStatus status) {
-        this.id = id;
-        this.start = start;
-        this.end = end;
-        this.item = item;
-        this.booker = booker;
-        this.status = status;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Booking booking = (Booking) o;
+        return getItem() == booking.getItem() && getBooker() == booking.getBooker() && getId().equals(booking.getId()) && getStart().equals(booking.getStart()) && getEnd().equals(booking.getEnd()) && getStatus() == booking.getStatus();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getStart(), getEnd(), getItem(), getBooker(), getStatus());
     }
 }
