@@ -70,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
                 log.info("Item {} уже забронирован на выбранные даты, бронирование недоступно.", booking.getItem().getId());
                 throw new NoAccessException("Item " + booking.getItem().getId() + " уже забронирован на выбранные даты.");
         }
-        if (booking.getItem().getOwner().getId() == booking.getBooker().getId()) {
+        if (booking.getItem().getOwner().getId().equals(booking.getBooker().getId())) {
             log.info("Пользователь {} является владельцем Item {}, нельзя создать бронирование.",
                     booking.getBooker().getId(), booking.getItem().getId());
             throw new NotFoundException(String.format("Пользователь %s является владельцем Item %s, нельзя создать бронирование.",
