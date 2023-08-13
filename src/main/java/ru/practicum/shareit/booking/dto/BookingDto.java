@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.enums.BookingStatus;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.UserDto;
+import ru.practicum.shareit.user.dto.UserDto;
 
 @Data
 @AllArgsConstructor
