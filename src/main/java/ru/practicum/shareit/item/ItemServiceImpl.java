@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("Невозможно создать item. Отсутствует название.");
         }
         User owner = userRepository.findById(userId).orElseThrow((
-                ()-> new NotFoundException("Невозможно создать предмет, владелец с id = " + userId + " не найден.")));
+                () -> new NotFoundException("Невозможно создать предмет, владелец с id = " + userId + " не найден.")));
         newItem.setOwner(owner);
         newItem.setAvailable(true);
         Item item = itemRepository.save(newItem);

@@ -136,28 +136,28 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime currentTime = LocalDateTime.now();
         switch (searchState) {
             case ALL:
-                bookingList = BookingMapper.toBookingDto(bookingRepository.
-                        findAllByBookerIdEqualsOrderByStartDesc(userId));
+                bookingList = BookingMapper.toBookingDto(bookingRepository
+                        .findAllByBookerIdEqualsOrderByStartDesc(userId));
                 break;
             case CURRENT:
-                bookingList = BookingMapper.toBookingDto(bookingRepository.
-                        findAllByBookerIdEqualsAndStartBeforeAndEndAfterOrderByStartDesc(userId, currentTime, currentTime));
+                bookingList = BookingMapper.toBookingDto(bookingRepository
+                        .findAllByBookerIdEqualsAndStartBeforeAndEndAfterOrderByStartDesc(userId, currentTime, currentTime));
                 break;
             case PAST:
-                bookingList = BookingMapper.toBookingDto(bookingRepository.
-                        findAllByBookerIdEqualsAndEndBeforeOrderByStartDesc(userId, currentTime));
+                bookingList = BookingMapper.toBookingDto(bookingRepository
+                        .findAllByBookerIdEqualsAndEndBeforeOrderByStartDesc(userId, currentTime));
                 break;
             case FUTURE:
-                bookingList = BookingMapper.toBookingDto(bookingRepository.
-                        findAllByBookerIdEqualsAndStartAfterOrderByStartDesc(userId, currentTime));
+                bookingList = BookingMapper.toBookingDto(bookingRepository
+                        .findAllByBookerIdEqualsAndStartAfterOrderByStartDesc(userId, currentTime));
                 break;
             case WAITING:
-                bookingList = BookingMapper.toBookingDto(bookingRepository.
-                        findAllByBookerIdEqualsAndStatusEqualsOrderByStartDesc(userId, BookingStatus.WAITING));
+                bookingList = BookingMapper.toBookingDto(bookingRepository
+                        .findAllByBookerIdEqualsAndStatusEqualsOrderByStartDesc(userId, BookingStatus.WAITING));
                 break;
             case REJECTED:
-                bookingList = BookingMapper.toBookingDto(bookingRepository.
-                        findAllByBookerIdEqualsAndStatusEqualsOrderByStartDesc(userId, BookingStatus.REJECTED));
+                bookingList = BookingMapper.toBookingDto(bookingRepository
+                        .findAllByBookerIdEqualsAndStatusEqualsOrderByStartDesc(userId, BookingStatus.REJECTED));
                 break;
         }
         if (bookingList.isEmpty()) {
@@ -180,28 +180,28 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime currentTime = LocalDateTime.now();
         switch (searchState) {
             case ALL:
-                bookingList = BookingMapper.toBookingDto(bookingRepository.
-                        findAllByItemOwnerIdEqualsOrderByStartDesc(userId));
+                bookingList = BookingMapper.toBookingDto(bookingRepository
+                        .findAllByItemOwnerIdEqualsOrderByStartDesc(userId));
                 break;
             case CURRENT:
-                bookingList = BookingMapper.toBookingDto(bookingRepository.
-                        findAllByItemOwnerIdEqualsAndStartBeforeAndEndAfterOrderByStartDesc(userId, currentTime, currentTime));
+                bookingList = BookingMapper.toBookingDto(bookingRepository
+                        .findAllByItemOwnerIdEqualsAndStartBeforeAndEndAfterOrderByStartDesc(userId, currentTime, currentTime));
                 break;
             case PAST:
-                bookingList = BookingMapper.toBookingDto(bookingRepository.
-                        findAllByItemOwnerIdEqualsAndEndBeforeOrderByStartDesc(userId, currentTime));
+                bookingList = BookingMapper.toBookingDto(bookingRepository
+                        .findAllByItemOwnerIdEqualsAndEndBeforeOrderByStartDesc(userId, currentTime));
                 break;
             case FUTURE:
-                bookingList = BookingMapper.toBookingDto(bookingRepository.
-                        findAllByItemOwnerIdEqualsAndStartAfterOrderByStartDesc(userId, currentTime));
+                bookingList = BookingMapper.toBookingDto(bookingRepository
+                        .findAllByItemOwnerIdEqualsAndStartAfterOrderByStartDesc(userId, currentTime));
                 break;
             case WAITING:
-                bookingList = BookingMapper.toBookingDto(bookingRepository.
-                        findAllByItemOwnerIdEqualsAndStatusEqualsOrderByStartDesc(userId, BookingStatus.WAITING));
+                bookingList = BookingMapper.toBookingDto(bookingRepository
+                        .findAllByItemOwnerIdEqualsAndStatusEqualsOrderByStartDesc(userId, BookingStatus.WAITING));
                 break;
             case REJECTED:
-                bookingList = BookingMapper.toBookingDto(bookingRepository.
-                        findAllByItemOwnerIdEqualsAndStatusEqualsOrderByStartDesc(userId, BookingStatus.REJECTED));
+                bookingList = BookingMapper.toBookingDto(bookingRepository
+                        .findAllByItemOwnerIdEqualsAndStatusEqualsOrderByStartDesc(userId, BookingStatus.REJECTED));
                 break;
         }
         if (bookingList.isEmpty()) {

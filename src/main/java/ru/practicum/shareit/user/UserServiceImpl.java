@@ -34,14 +34,14 @@ public class UserServiceImpl implements UserService {
 
     public void removeUser(long userId) {
         User oldUser = repository.findById(userId).orElseThrow(
-                ()-> new NotFoundException("Невозможно обновить. Пользователь с id = " + userId + " не найден."));
+                () -> new NotFoundException("Невозможно обновить. Пользователь с id = " + userId + " не найден."));
         repository.deleteById(userId);
         log.info("Пользователь с id = {} удалён.", userId);
     }
 
     public UserDto updateUser(User user, long userId) {
         User oldUser = repository.findById(userId).orElseThrow(
-                ()-> new NotFoundException("Невозможно обновить. Пользователь с id = " + userId + " не найден."));
+                () -> new NotFoundException("Невозможно обновить. Пользователь с id = " + userId + " не найден."));
         if (user.getEmail() != null && !user.getEmail().equals(oldUser.getEmail())) {
             User sameEmailUser = repository.findByEmailEquals(user.getEmail());
             if (sameEmailUser != null) {
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
     public UserDto getUser(long id) {
         User user = repository.findById(id).orElseThrow(
-                ()-> new NotFoundException("Невозможно выгрузить. Пользователь с id = " + id + " не найден."));
+                () -> new NotFoundException("Невозможно выгрузить. Пользователь с id = " + id + " не найден."));
         log.info("Пользователь с id = {} выгружен.", user.getId());
         return UserMapper.mapToUserDto(user);
     }

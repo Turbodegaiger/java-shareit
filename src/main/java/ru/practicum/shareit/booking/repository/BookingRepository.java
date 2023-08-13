@@ -11,8 +11,6 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     Iterable<Booking> findAllByBookerIdEqualsOrderByStartDesc(long userId);
 
-    List<BookingDto> findAllByItemOwnerIdEquals(long userId);
-    
     Iterable<Booking> findAllByBookerIdEqualsAndStatusEqualsOrderByStartDesc(long userId, BookingStatus state);
 
     Iterable<Booking> findAllByBookerIdEqualsAndStartAfterOrderByStartDesc(long userId, LocalDateTime currentTime);
