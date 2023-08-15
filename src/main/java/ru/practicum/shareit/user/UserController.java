@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,24 +13,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/users")
+@RequiredArgsConstructor
 @Slf4j
 public class UserController {
     @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public UserDto createUser(@Valid @RequestBody User user) {
         log.info("Принят запрос на создание пользователя с параметрами: {}", user);
-        return userService.createUser(user);
-    }
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/test")
-    public UserDto createUserTest() {
-        User user = new User();
-        user.setName("babai");
-        user.setName("babaika@ya.ru");
         return userService.createUser(user);
     }
 

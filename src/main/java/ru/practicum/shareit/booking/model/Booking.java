@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -21,10 +20,8 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
     @Column(name = "start_datetime")
     private LocalDateTime start;
-    @NotNull
     @Column(name = "end_datetime")
     private LocalDateTime end;
     @ManyToOne(fetch = FetchType.LAZY)

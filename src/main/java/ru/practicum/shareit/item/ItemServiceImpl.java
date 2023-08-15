@@ -36,11 +36,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     @Autowired
-    private ItemRepository itemRepository;
+    private final ItemRepository itemRepository;
     @Autowired
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
     @Autowired
-    private BookingRepository bookingRepository;
+    private final BookingRepository bookingRepository;
     @Autowired
     private final UserRepository userRepository;
 
@@ -56,7 +56,7 @@ public class ItemServiceImpl implements ItemService {
         newItem.setOwner(owner);
         newItem.setAvailable(true);
         Item item = itemRepository.save(newItem);
-        log.info("Создан itemId {} с id = {}, владелец - {}.", item.getName(), item.getId(), item.getOwner());
+        log.info("Создан item {}.", item);
         return ItemMapper.toItemDto(item);
     }
 
@@ -85,7 +85,7 @@ public class ItemServiceImpl implements ItemService {
             newItem.setAvailable(oldItem.get().getAvailable());
         }
         Item updatedItem = itemRepository.save(newItem);
-        log.info("Обновлён itemId с id = {}, владелец - {}.", itemId, owner.get().getId());
+        log.info("Обновлён item {}.", updatedItem);
         return ItemMapper.toItemDto(updatedItem);
     }
 
@@ -107,7 +107,7 @@ public class ItemServiceImpl implements ItemService {
                             itemId, BookingStatus.REJECTED, LocalDateTime.now()));
         }
         List<Comment> comments = commentRepository.findAllByItemIdEqualsOrderByCreatedDesc(itemId);
-        log.info("Выгружен itemId с id = {}, владелец - {}.", item.get().getId(), item.get().getOwner());
+        log.info("Выгружен item {}.", item);
         return ItemMapper.toItemCommentDto(item.get(), bookingBefore, bookingAfter, comments);
     }
 
@@ -125,7 +125,7 @@ public class ItemServiceImpl implements ItemService {
             List<Comment> comments = commentRepository.findAllByItemIdEqualsOrderByCreatedDesc(item.getId());
             itemsForOwner.add(ItemMapper.toItemCommentDto(item, bookingBefore, bookingAfter, comments));
         }
-        log.info("Выгружен список itemId, принадлежащих user {} размером {} записей", owner, items.size());
+        log.info("Выгружен список item, принадлежащих user {} размером {} записей", owner, items.size());
         return itemsForOwner;
     }
 
@@ -139,7 +139,7 @@ public class ItemServiceImpl implements ItemService {
                 .filter(Item::getAvailable)
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
-        log.info("Выгружен список itemId по запросу: '{}' размером {} записей", text, items.size());
+        log.info("Выгружен список item по запросу: '{}' размером {} записей", text, items.size());
         return items;
     }
 
@@ -172,6 +172,7 @@ public class ItemServiceImpl implements ItemService {
         newComment.setAuthor(user.get());
         newComment.setItem(item.get());
         Comment returnValue = commentRepository.save(newComment);
+        log.info("Создан комментарий {}.", returnValue);
         return CommentMapper.toCommentDto(returnValue);
     }
 }

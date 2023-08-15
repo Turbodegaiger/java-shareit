@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
 import java.util.Objects;
 
 @Data
@@ -17,12 +16,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotEmpty(message = "Имя пользователя не может быть null")
-    @Size(min = 1, max = 50)
     private String name;
-    @NotEmpty(message = "email не может быть null")
-    @Email
-    @Size(min = 1, max = 100)
+    @Column(unique = true)
     private String email;
 
     @Override

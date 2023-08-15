@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/items")
+@RequiredArgsConstructor
 @Slf4j
 public class ItemController {
     private final String userIdHeader = "X-Sharer-User-Id";
     @Autowired
-    private ItemService itemService;
+    private final ItemService itemService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

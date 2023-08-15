@@ -28,14 +28,16 @@ public class UserServiceImpl implements UserService {
                     String.format("Невозможно создать пользователя %s, некорректный email.", user.getName()));
         }
         User newUser = repository.save(user);
-        log.info("Создан пользователь id = {} с email {}.", newUser.getId(), newUser.getEmail());
+        log.info("Создан пользователь {}.", newUser);
         return UserMapper.mapToUserDto(newUser);
     }
 
     public void removeUser(long userId) {
-        User oldUser = repository.findById(userId).orElseThrow(
-                () -> new NotFoundException("Невозможно обновить. Пользователь с id = " + userId + " не найден."));
-        repository.deleteById(userId);
+        try {
+            repository.deleteById(userId);
+        } catch (IllegalArgumentException exception) {
+            throw new NotFoundException("Невозможно обновить. Пользователь с id = " + userId + " не найден.");
+        }
         log.info("Пользователь с id = {} удалён.", userId);
     }
 
@@ -58,7 +60,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail(oldUser.getEmail());
         }
         User updatedUser = repository.save(user);
-        log.info("Пользователь с id = {} обновлён.", updatedUser.getId());
+        log.info("Пользователь обновлён {}.", updatedUser);
         return UserMapper.mapToUserDto(updatedUser);
     }
 

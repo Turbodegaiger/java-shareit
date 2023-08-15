@@ -79,8 +79,7 @@ public class BookingServiceImpl implements BookingService {
         booking.getItem().setAvailable(false);
         booking.setStatus(BookingStatus.WAITING);
         Booking newBooking = bookingRepository.save(booking);
-        log.info("Создано бронирование с id = {} на предмет id {}, автор = {}, владелец вещи = {}.", newBooking.getId(),
-                newBooking.getItem().getId(), newBooking.getBooker().getId(), newBooking.getItem().getOwner().getId());
+        log.info("Создано бронирование {}.", newBooking);
         return BookingMapper.toBookingDto(newBooking);
     }
 
@@ -115,8 +114,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto getBooking(long bookingId, long userId) {
         Booking booking = findBookingById(bookingId);
         if (booking.getItem().getOwner().getId() == userId || booking.getBooker().getId() == userId) {
-            log.info("Выгружен booking с id = {}, на предмет id {}, автор = {}, владелец вещи = {}.", booking.getId(),
-                    booking.getItem().getId(), booking.getBooker().getId(), booking.getItem().getOwner().getId());
+            log.info("Выгружено бронирование {}.", booking);
             return BookingMapper.toBookingDto(booking);
         }
         log.info("Для указанного пользователя id = {} не найдено бронирование c id = {}.", userId, bookingId);
