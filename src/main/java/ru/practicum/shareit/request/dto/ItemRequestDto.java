@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * TODO Sprint add-item-requests.
+ * TODO Sprint add-itemId-requests.
  */
 @Data
 public class ItemRequestDto {
