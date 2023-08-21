@@ -1,12 +1,56 @@
 package ru.practicum.shareit.request;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
+
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * TODO Sprint add-itemId-requests.
  */
 @RestController
 @RequestMapping(path = "/requests")
+@RequiredArgsConstructor
+@Slf4j
 public class ItemRequestController {
+    private final String userIdHeader = "X-Sharer-User-Id";
+    @Autowired
+    private final ItemRequestService requestService;
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ItemRequestDto createRequest(@Valid @RequestBody ItemRequestDto request,
+                              @RequestHeader(userIdHeader) long userId) {
+        log.info("Принят запрос на создание ItemRequest от пользователя {}.", userId);
+        return requestService.createRequest(request, userId);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<ItemRequestDto> getRequests(@RequestHeader(userIdHeader) long userId) {
+        log.info("Принят запрос на получение запросов для пользователя {}.", userId);
+        return requestService.getRequests(userId);
+    }
+
+    @GetMapping("/{requestId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ItemRequestDto getRequest(@RequestHeader(userIdHeader) long userId, @PathVariable long requestId) {
+        log.info("Принят запрос на получение запросов для пользователя {}.", userId);
+        return requestService.getRequest(userId, requestId);
+    }
+
+    @GetMapping("/all")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<ItemRequestDto> searchRequests(@RequestHeader(userIdHeader) long userId,
+                                      @RequestParam int from,
+                                      @RequestParam int size) {
+        log.info("Принят запрос от пользователя {} на поиск всех запросов.", userId);
+        return requestService.searchRequests(userId, from, size);
+    }
 }
