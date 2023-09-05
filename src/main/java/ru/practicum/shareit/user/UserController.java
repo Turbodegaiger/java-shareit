@@ -21,7 +21,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public UserDto createUser(@Valid @RequestBody User user) {
+    public UserDto createUser(@Valid @RequestBody UserDto user) {
         log.info("Принят запрос на создание пользователя с параметрами: {}", user);
         return userService.createUser(user);
     }
@@ -35,7 +35,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{userId}")
-    public UserDto updateUser(@RequestBody User user, @PathVariable long userId) {
+    public UserDto updateUser(@RequestBody @Valid UserDto user, @PathVariable long userId) {
         log.info("Принят запрос на обновление пользователя с id = {}", userId);
         return userService.updateUser(user, userId);
     }

@@ -23,7 +23,7 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto createItem(@Valid @RequestBody ItemDto item,
+    public ItemDto createItem(@RequestBody @Valid ItemDto item,
                               @RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на создание itemId.");
         return itemService.createItem(item, userId);
@@ -31,7 +31,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDto updateItem(@RequestBody ItemDto item,
+    public ItemDto updateItem(@RequestBody @Valid ItemDto item,
                               @PathVariable long itemId,
                               @RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на изменения itemId id = {}.", itemId);
@@ -47,16 +47,20 @@ public class ItemController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemCommentDto> getItems(@RequestHeader(userIdHeader) long userId) {
+    public List<ItemCommentDto> getItems(@RequestHeader(userIdHeader) long userId,
+                                         @RequestParam(defaultValue = "0", required = false) int from,
+                                         @RequestParam(defaultValue = "10", required = false) int size) {
         log.info("Принят запрос на получение всех itemId для пользователя {}.", userId);
-        return itemService.getItems(userId);
+        return itemService.getItems(userId, from, size);
     }
 
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> searchItems(@RequestParam String text) {
+    public List<ItemDto> searchItems(@RequestParam String text,
+                                     @RequestParam(defaultValue = "0", required = false) int from,
+                                     @RequestParam(defaultValue = "10", required = false) int size) {
         log.info("Принят запрос на поиск itemId, где название или описание содержит '{}'", text);
-        return itemService.searchItems(text);
+        return itemService.searchItems(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

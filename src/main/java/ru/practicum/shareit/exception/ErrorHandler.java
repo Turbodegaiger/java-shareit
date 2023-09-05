@@ -51,6 +51,7 @@ public class ErrorHandler {
         if (exception.getMessage() == null) {
             return new ErrorResponse("Произошла непредвиденная ошибка.");
         }
+        log.info(exception.toString());
         return new ErrorResponse(exception.getMessage());
     }
 

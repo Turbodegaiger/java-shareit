@@ -39,8 +39,8 @@ public class BookingController {
 
     @GetMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.OK)
-    public BookingDto getItem(@PathVariable long bookingId,
-                           @RequestHeader(userIdHeader) long userId) {
+    public BookingDto getBooking(@PathVariable long bookingId,
+                                 @RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на получение booking id = {}.", bookingId);
         return bookingService.getBooking(bookingId, userId);
     }
@@ -48,16 +48,20 @@ public class BookingController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDto> getUserBookings(@RequestParam(required = false, defaultValue = "ALL") String state,
-                                            @RequestHeader(userIdHeader) long userId) {
+                                            @RequestHeader(userIdHeader) long userId,
+                                            @RequestParam(defaultValue = "0", required = false) int from,
+                                            @RequestParam(defaultValue = "10", required = false) int size) {
         log.info("Принят запрос на получение бронирований для пользователя id = {}.", userId);
-        return bookingService.getAllUserBookings(userId, state);
+        return bookingService.getAllUserBookings(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDto> getOwnerBookings(@RequestParam(required = false, defaultValue = "ALL") String state,
-                                            @RequestHeader(userIdHeader) long userId) {
+                                             @RequestHeader(userIdHeader) long userId,
+                                             @RequestParam(defaultValue = "0", required = false) int from,
+                                             @RequestParam(defaultValue = "10", required = false) int size) {
         log.info("Принят запрос на получение бронирований для пользователя-владельца id = {}.", userId);
-        return bookingService.getAllOwnerBookings(userId, state);
+        return bookingService.getAllOwnerBookings(userId, state, from, size);
     }
 }

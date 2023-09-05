@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -33,23 +34,23 @@ public class ItemRequestController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemRequestDto> getRequests(@RequestHeader(userIdHeader) long userId) {
+    public List<ItemRequestResponseDto> getRequests(@RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на получение запросов для пользователя {}.", userId);
         return requestService.getRequests(userId);
     }
 
     @GetMapping("/{requestId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemRequestDto getRequest(@RequestHeader(userIdHeader) long userId, @PathVariable long requestId) {
+    public ItemRequestResponseDto getRequest(@RequestHeader(userIdHeader) long userId, @PathVariable long requestId) {
         log.info("Принят запрос на получение запросов для пользователя {}.", userId);
         return requestService.getRequest(userId, requestId);
     }
 
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
-    public Page<ItemRequestDto> searchRequests(@RequestHeader(userIdHeader) long userId,
-                                      @RequestParam int from,
-                                      @RequestParam int size) {
+    public List<ItemRequestResponseDto> searchRequests(@RequestHeader(userIdHeader) long userId,
+                                               @RequestParam(defaultValue = "0", required = false) int from,
+                                               @RequestParam(defaultValue = "10", required = false) int size) {
         log.info("Принят запрос от пользователя {} на поиск всех запросов.", userId);
         return requestService.searchRequests(userId, from, size);
     }

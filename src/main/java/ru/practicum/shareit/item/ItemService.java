@@ -14,9 +14,9 @@ public interface ItemService {
 
     ItemCommentDto getItem(long itemId, long userId);
 
-    List<ItemCommentDto> getItems(long owner);
+    List<ItemCommentDto> getItems(long owner, int from, int size);
 
-    List<ItemDto> searchItems(String text);
+    List<ItemDto> searchItems(String text, int from, int size);
 
     CommentDto createComment(CommentDto commentDto, long itemId, long userId);
 }

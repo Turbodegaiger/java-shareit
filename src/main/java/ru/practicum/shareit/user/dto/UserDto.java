@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-    private Long id;
+    private long id;
     @NotEmpty(message = "Имя пользователя не может быть null")
     @Size(min = 1, max = 50)
     private String name;

@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class ItemDto {
+public class ItemForResponseDto {
     private long id;
     @NotEmpty(message = "Имя не может быть null")
     @Size(min = 1, max = 255)
@@ -19,8 +21,9 @@ public class ItemDto {
     @NotEmpty(message = "Описание не может быть null")
     @Size(min = 1, max = 512)
     private String description;
-    @NotNull
+    @NotNull(message = "Поле available не может быть null")
     private Boolean available;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
     private long requestId;
-    private long ownerId;
 }
