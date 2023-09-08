@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,8 +22,6 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.exception.WrongInputDataException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -37,7 +34,6 @@ import java.util.Optional;
 @Slf4j
 @AllArgsConstructor
 public class BookingServiceImpl implements BookingService {
-
     @Autowired
     private final BookingRepository bookingRepository;
     @Autowired
@@ -48,14 +44,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public BookingDto createBooking(BookingShortDto bookingDto, long userId) {
-        if (bookingDto.getStart() == null || bookingDto.getEnd() == null) {
-            log.info("Невозможно создать бронирование без даты начала и даты окончания.");
-            throw new ValidationException("Невозможно создать бронирование без даты начала и даты окончания.");
-        }
         Booking booking = BookingMapper.toBooking(bookingDto);
         if (booking.getStart().isAfter(booking.getEnd())
             || booking.getStart().isBefore(LocalDateTime.now().minusSeconds(5))
-            || booking.getEnd().isBefore(LocalDateTime.now())
+            || booking.getEnd().isBefore(LocalDateTime.now().minusSeconds(5))
             || booking.getEnd().isEqual(booking.getStart())) {
             log.info("Невозможно создать бронирование, некорректные даты начала и окончания.");
             throw new ValidationException("Невозможно создать бронирование, некорректные даты начала и окончания.");
@@ -86,24 +78,6 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(BookingStatus.WAITING);
         Booking newBooking = bookingRepository.save(booking);
         log.info("Создано бронирование {}.", newBooking);
-        return BookingMapper.toBookingDto(newBooking);
-    }
-
-    public BookingDto createBooking1(BookingShortDto bookingDto, long userId) {
-        Booking testBooking1 = new Booking(
-                1L,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                new Item(
-                        1L,
-                        "predmet",
-                        "prosto predmet",
-                        false,
-                        0L,
-                        UserMapper.mapToNewUser(new UserDto(2L, "user2", "user2@ya.ru"))),
-                UserMapper.mapToNewUser(new UserDto(1L, "user1", "user1@ya.ru")),
-                BookingStatus.WAITING);
-        Booking newBooking = bookingRepository.save(testBooking1);
         return BookingMapper.toBookingDto(newBooking);
     }
 
@@ -156,7 +130,9 @@ public class BookingServiceImpl implements BookingService {
         }
         Pageable pageParams = PageRequest.of(fromToPage(from, size), size, Sort.by(Sort.Direction.DESC, "start"));
         List<BookingDto> bookingList = new ArrayList<>();
-        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime dt = LocalDateTime.now();
+        LocalDateTime currentTime = LocalDateTime.of(
+                dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond());
         switch (searchState) {
             case ALL:
                 bookingList = BookingMapper.toBookingDto(bookingRepository
@@ -201,7 +177,9 @@ public class BookingServiceImpl implements BookingService {
         }
         Pageable pageParams = PageRequest.of(fromToPage(from, size), size, Sort.by(Sort.Direction.DESC, "start"));
         List<BookingDto> bookingList = new ArrayList<>();
-        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime dt = LocalDateTime.now();
+        LocalDateTime currentTime = LocalDateTime.of(
+                dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond());
         switch (searchState) {
             case ALL:
                 bookingList = BookingMapper.toBookingDto(bookingRepository

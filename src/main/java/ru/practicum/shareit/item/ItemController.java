@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemForUpdate;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -31,7 +32,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDto updateItem(@RequestBody @Valid ItemDto item,
+    public ItemDto updateItem(@RequestBody @Valid ItemForUpdate item,
                               @PathVariable long itemId,
                               @RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на изменения itemId id = {}.", itemId);

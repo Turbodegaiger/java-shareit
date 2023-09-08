@@ -15,12 +15,15 @@ public class CommentMapper {
         if (comment == null) {
             return new CommentDto();
         }
+        LocalDateTime dt = comment.getCreated();
         return new CommentDto(
                 comment.getId(),
                 comment.getText(),
                 comment.getItem().getId(),
                 comment.getAuthor().getName(),
-                comment.getCreated().toString());
+                LocalDateTime.of(
+                        dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond(), dt.getNano())
+                        .toString());
     }
 
     public static List<CommentDto> toCommentDto(Iterable<Comment> comments) {
@@ -37,6 +40,6 @@ public class CommentMapper {
                 commentDto.getText(),
                 new Item(),
                 new User(),
-                LocalDateTime.now());
+                null);
     }
 }

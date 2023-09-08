@@ -1,17 +1,22 @@
 package ru.practicum.shareit.user.mapper;
 
-import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserForUpdateDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@NoArgsConstructor
 public class UserMapper {
 
     public static UserDto mapToUserDto(User user) {
         return new UserDto(user.getId(),
+                user.getName(),
+                user.getEmail());
+    }
+
+    public static UserDto mapToUser(UserForUpdateDto user, long id) {
+        return new UserDto(id,
                 user.getName(),
                 user.getEmail());
     }

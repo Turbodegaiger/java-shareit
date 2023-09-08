@@ -50,16 +50,6 @@ public class BookingMapper {
         return bookingDtoList;
     }
 
-    public static Booking toBooking(BookingDto bookingDto) {
-        return new Booking(
-                bookingDto.getId(),
-                LocalDateTime.parse(bookingDto.getStart()),
-                LocalDateTime.parse(bookingDto.getEnd()),
-                new Item(),
-                new User(),
-                bookingDto.getStatus());
-    }
-
     public static Booking toBooking(BookingShortDto bookingDto) {
         return new Booking(
                 0L,

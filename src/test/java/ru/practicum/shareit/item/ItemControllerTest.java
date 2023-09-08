@@ -9,13 +9,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingForItemDto;
-import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NoAccessException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemForUpdate;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.nio.charset.StandardCharsets;
@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -41,6 +40,7 @@ public class ItemControllerTest {
     private MockMvc mvc;
     String userIdHeader = "X-Sharer-User-Id";
     ItemDto testItemDto1 = new ItemDto(1, "predmet", "prosto predmet", true, 0, 1);
+    ItemForUpdate testItemUpdateDto1 = new ItemForUpdate("NEWpredmet", "prosto predmet", true, 0, 1);
     ItemCommentDto testItemCommentDto1 = new ItemCommentDto(
             1,
             "predmet",
@@ -166,9 +166,9 @@ public class ItemControllerTest {
     @SneakyThrows
     @Test
     void updateItemTest_ifValid_returnUpdatedItemDto() {
-        ItemDto update = updateTest;
+        ItemForUpdate update = testItemUpdateDto1;
         when(itemService.updateItem(update, 1, 1))
-                .thenReturn(update);
+                .thenReturn(updateTest);
 
         String result = mvc.perform(patch("/items/{itemId}", "1")
                         .content(mapper.writeValueAsString(update))
@@ -181,7 +181,7 @@ public class ItemControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        assertEquals(mapper.writeValueAsString(update), result);
+        assertEquals(mapper.writeValueAsString(updateTest), result);
     }
 
     @SneakyThrows
@@ -243,10 +243,10 @@ public class ItemControllerTest {
     @SneakyThrows
     @Test
     void updateItemTest_ifNoSuchItem_responseNotFound() {
-        doThrow(NotFoundException.class).when(itemService).updateItem(updateTest, 1, 1);
+        doThrow(NotFoundException.class).when(itemService).updateItem(testItemUpdateDto1, 1, 1);
 
         mvc.perform(patch("/items/{itemId}", "1")
-                        .content(mapper.writeValueAsString(updateTest))
+                        .content(mapper.writeValueAsString(testItemUpdateDto1))
                         .contentType("application/json")
                         .header(userIdHeader, 1)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -257,10 +257,10 @@ public class ItemControllerTest {
     @SneakyThrows
     @Test
     void updateItemTest_ifNoSuchUser_responseNotFound() {
-        doThrow(NotFoundException.class).when(itemService).updateItem(updateTest, 1, 2);
+        doThrow(NotFoundException.class).when(itemService).updateItem(testItemUpdateDto1, 1, 2);
 
         mvc.perform(patch("/items/{itemId}", "1")
-                        .content(mapper.writeValueAsString(updateTest))
+                        .content(mapper.writeValueAsString(testItemUpdateDto1))
                         .contentType("application/json")
                         .header(userIdHeader, 2)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -381,7 +381,7 @@ public class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void createComment_ifOk_returnCommentDto() {
+    void createCommentTest_ifOk_returnCommentDto() {
         when(itemService.createComment(testCommentDto, testItemDto1.getId(), testUserDto1.getId()))
                 .thenReturn(testCommentDto);
 
@@ -401,7 +401,7 @@ public class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void createComment_ifInvalidDto_returnBadRequest() {
+    void createCommentTest_ifInvalidDto_returnBadRequest() {
         StringBuilder sb = new StringBuilder();
         CommentDto invalidTestCommentDto = testCommentDto;
 
@@ -427,7 +427,7 @@ public class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void createComment_ifNoSuchUser_returnNotFound() {
+    void createCommentTest_ifNoSuchUser_returnNotFound() {
         doThrow(NotFoundException.class).when(itemService).createComment(testCommentDto, testItemDto1.getId(), 2);
         mvc.perform(post("/items/{itemId}/comment", "1")
                         .content(mapper.writeValueAsString(testCommentDto))
@@ -440,7 +440,7 @@ public class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void createComment_ifNoSuchItem_returnNotFound() {
+    void createCommentTest_ifNoSuchItem_returnNotFound() {
         doThrow(NotFoundException.class).when(itemService).createComment(testCommentDto, 2, testUserDto1.getId());
         mvc.perform(post("/items/{itemId}/comment", "2")
                         .content(mapper.writeValueAsString(testCommentDto))
@@ -453,7 +453,7 @@ public class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void createComment_ifUserNotABooker_returnBadRequest() {
+    void createCommentTest_ifUserNotABooker_returnBadRequest() {
         doThrow(NoAccessException.class).when(itemService).createComment(testCommentDto, testItemDto1.getId(), testUserDto1.getId());
         mvc.perform(post("/items/{itemId}/comment", "1")
                         .content(mapper.writeValueAsString(testCommentDto))
@@ -463,88 +463,4 @@ public class ItemControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
-//
-//    @SneakyThrows
-//    @Test
-//    void deleteUserTest_ifUserNotExists_responseIsNotFound() {
-//        doThrow(NotFoundException.class).when(userService).removeUser(0L);
-//        mvc.perform(delete("/items/{userId}", "0")
-//                        .characterEncoding(StandardCharsets.UTF_8)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isNotFound());
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    void updateUserTest_ifUserNotExists_NotFoundException() {
-//        ItemDto update = new ItemDto(3, "user30", "user3@ya.ru");
-//        when(userService.updateUser(update, 3))
-//                .thenThrow(NotFoundException.class);
-//
-//        mvc.perform(patch("/items/{userId}", "3")
-//                        .content(mapper.writeValueAsString(update))
-//                        .characterEncoding(StandardCharsets.UTF_8)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isNotFound());
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    void updateUserTest_ifEmailConflict_AlreadyExistsException() {
-//        ItemDto update = new ItemDto(1, "user1", "user2@ya.ru");
-//        when(userService.updateUser(update, 1))
-//                .thenThrow(AlreadyExistsException.class);
-//
-//        mvc.perform(patch("/items/{userId}", "1")
-//                        .content(mapper.writeValueAsString(update))
-//                        .characterEncoding(StandardCharsets.UTF_8)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isConflict());
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    void getUserTest_ifFound_returnItemDto() {
-//        when(userService.getUser(userDto1.getId())).thenReturn(userDto1);
-//
-//        String result = mvc.perform(get("/items/{userId}", "1")
-//                        .characterEncoding(StandardCharsets.UTF_8)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andReturn()
-//                .getResponse()
-//                .getContentAsString();
-//
-//        assertEquals(mapper.writeValueAsString(userDto1), result);
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    void getUserTest_ifNotFound_NotFoundException() {
-//        when(userService.getUser(3)).thenThrow(NotFoundException.class);
-//
-//        mvc.perform(get("/items/{userId}", "3")
-//                        .characterEncoding(StandardCharsets.UTF_8)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isNotFound());
-//    }
-//
-//    @SneakyThrows
-//    @Test
-//    void getUsersTest_ifInvoked_returnItemDtoList() {
-//        when(userService.getUsers()).thenReturn(List.of(userDto1));
-//
-//        String result = mvc.perform(get("/items/")
-//                        .characterEncoding(StandardCharsets.UTF_8)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andReturn()
-//                .getResponse()
-//                .getContentAsString();
-//
-//        assertEquals(mapper.writeValueAsString(List.of(userDto1)), result);
-//    }
 }

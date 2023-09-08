@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserForUpdateDto;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -131,7 +132,8 @@ public class UserControllerTest {
     @Test
     void updateUserTest_ifUserExists_returnUpdatedUser() {
         UserDto update = new UserDto(1, "user10", "user1@ya.ru");
-        when(userService.updateUser(update, 1))
+        UserForUpdateDto updateDto = new UserForUpdateDto("user10", "user1@ya.ru");
+        when(userService.updateUser(updateDto, 1))
                 .thenReturn(update);
 
         String result = mvc.perform(patch("/users/{userId}", "1")
@@ -150,12 +152,12 @@ public class UserControllerTest {
     @SneakyThrows
     @Test
     void updateUserTest_ifUserNotExists_NotFoundException() {
-        UserDto update = new UserDto(3, "user30", "user3@ya.ru");
-        when(userService.updateUser(update, 3))
+        UserForUpdateDto updateDto = new UserForUpdateDto("user30", "user3@ya.ru");
+        when(userService.updateUser(updateDto, 3))
                 .thenThrow(NotFoundException.class);
 
         mvc.perform(patch("/users/{userId}", "3")
-                        .content(mapper.writeValueAsString(update))
+                        .content(mapper.writeValueAsString(updateDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -165,12 +167,12 @@ public class UserControllerTest {
     @SneakyThrows
     @Test
     void updateUserTest_ifEmailConflict_AlreadyExistsException() {
-        UserDto update = new UserDto(1, "user1", "user2@ya.ru");
-        when(userService.updateUser(update, 1))
+        UserForUpdateDto updateDto = new UserForUpdateDto("user2", "user2@ya.ru");
+        when(userService.updateUser(updateDto, 1))
                 .thenThrow(AlreadyExistsException.class);
 
         mvc.perform(patch("/users/{userId}", "1")
-                        .content(mapper.writeValueAsString(update))
+                        .content(mapper.writeValueAsString(updateDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

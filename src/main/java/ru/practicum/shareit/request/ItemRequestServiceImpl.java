@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.exception.WrongInputDataException;
 import ru.practicum.shareit.item.dto.ItemForResponseDto;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -39,10 +38,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto createRequest(ItemRequestDto request, long userId) {
-        if (request == null || request.getDescription().isBlank()) {
-            log.info("Невозможно создать request. Отсутствует описание.");
-            throw new ValidationException("Невозможно создать item. Отсутствует описание.");
-        }
+        LocalDateTime dt = LocalDateTime.now();
+        LocalDateTime dateTime = LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond());
         Optional<User> requestor = userRepository.findById(userId);
         if (requestor.isEmpty()) {
             log.info("Невозможно создать request, пользователь с id = " + userId + " не найден.");
@@ -50,7 +47,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         }
         ItemRequest newRequest = ItemRequestMapper.toItemRequest(request);
         newRequest.setRequestorId(userId);
-        newRequest.setCreated(LocalDateTime.now());
+        newRequest.setCreated(dateTime);
         ItemRequest returnValue = requestRepository.save(newRequest);
         log.info("Создан request: {}", returnValue);
         return ItemRequestMapper.toItemRequestDto(returnValue);
@@ -81,7 +78,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             log.info("Невозможно получить список request, пользователь с id = " + userId + " не найден.");
             throw new NotFoundException("Невозможно получить список request, пользователь с id = " + userId + " не найден.");
         }
-        List<ItemRequest> requests = requestRepository.findAllByIdEqualsOrderByCreatedDesc(userId);
+        List<ItemRequest> requests = requestRepository.findAllByRequestorIdEqualsOrderByCreatedDesc(userId);
         List<ItemRequestResponseDto> requestResponseList = new ArrayList<>();
         for (ItemRequest request : requests) {
             List<ItemForResponseDto> items = itemRepository.findAllByRequestIdEquals(request.getId());
@@ -99,7 +96,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new NotFoundException("Невозможно получить список request, пользователь с id = " + userId + " не найден.");
         }
         Pageable pageParams = PageRequest.of(fromToPage(from, size), size, Sort.by(Sort.Direction.DESC, "created"));
-        Page<ItemRequest> requests = requestRepository.findAllByIdNotOrderByCreatedDesc(userId, pageParams);
+        Page<ItemRequest> requests = requestRepository.findAllByRequestorIdNotOrderByCreatedDesc(userId, pageParams);
         List<ItemRequestResponseDto> requestResponseList = new ArrayList<>();
         for (ItemRequest request : requests) {
             List<ItemForResponseDto> items = itemRepository.findAllByRequestIdEquals(request.getId());

@@ -20,6 +20,7 @@ import ru.practicum.shareit.exception.WrongInputDataException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemForUpdate;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
@@ -55,10 +56,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto createItem(ItemDto itemDto, long userId) {
         Item newItem = ItemMapper.toItem(itemDto);
-//        if (newItem.getName() == null || newItem.getName().isBlank()) {
-//            log.info("Невозможно создать item. Отсутствует название.");
-//            throw new ValidationException("Невозможно создать item. Отсутствует название.");
-//        }
         if (newItem.getRequestId() != null && newItem.getRequestId() != 0) {
             Optional<ItemRequest> request = requestRepository.findById(newItem.getRequestId());
             if (request.isEmpty()) {
@@ -77,7 +74,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto updateItem(ItemDto item, long itemId, long userId) {
+    public ItemDto updateItem(ItemForUpdate item, long itemId, long userId) {
         Optional<User> owner = userRepository.findById(userId);
         if (owner.isEmpty()) {
             log.info("Невозможно обновить предмет, владелец с id = " + userId + " не найден.");
@@ -88,8 +85,7 @@ public class ItemServiceImpl implements ItemService {
             log.info("Не найден itemId с id = {}.", itemId);
             throw new NotFoundException(String.format("Не найден itemId с id = %s.", itemId));
         }
-        Item newItem = ItemMapper.toItem(item);
-        newItem.setId(itemId);
+        Item newItem = ItemMapper.toItem(item, itemId);
         newItem.setOwner(owner.get());
         if (newItem.getName() == null) {
             newItem.setName(oldItem.get().getName());
@@ -119,15 +115,20 @@ public class ItemServiceImpl implements ItemService {
         }
         BookingForItemDto bookingBefore = null;
         BookingForItemDto bookingAfter = null;
+        LocalDateTime dt = LocalDateTime.now();
         if (item.get().getOwner().getId() == userId) {
             bookingBefore = BookingMapper.toBookingForItemDto(
                     bookingRepository.findFirstByItemIdEqualsAndStatusIsNotAndStartBeforeOrderByStartDesc(
-                            itemId, BookingStatus.REJECTED, LocalDateTime.now()));
+                            itemId,
+                            BookingStatus.REJECTED,
+                            LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond())));
             bookingAfter = BookingMapper.toBookingForItemDto(
                     bookingRepository.findFirstByItemIdEqualsAndStatusIsNotAndStartAfterOrderByStartAsc(
-                            itemId, BookingStatus.REJECTED, LocalDateTime.now()));
+                            itemId,
+                            BookingStatus.REJECTED,
+                            LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond())));
         }
-        List<Comment> comments = commentRepository.findAllByItemIdEqualsOrderByCreatedDesc(itemId);
+        List<CommentDto> comments = CommentMapper.toCommentDto(commentRepository.findAllByItemIdEqualsOrderByCreatedDesc(itemId));
         log.info("Выгружен item {}.", item);
         return ItemMapper.toItemCommentDto(item.get(), bookingBefore, bookingAfter, comments);
     }
@@ -142,14 +143,19 @@ public class ItemServiceImpl implements ItemService {
         Pageable pageParams = PageRequest.of(fromToPage(from, size), size, Sort.by(Sort.Direction.ASC, "id"));
         Page<Item> items = itemRepository.findAllByOwnerIdIsOrderByIdAsc(owner, pageParams);
         List<ItemCommentDto> itemsForOwner = new ArrayList<>();
+        LocalDateTime dt = LocalDateTime.now();
         for (Item item : items) {
             BookingForItemDto bookingBefore = BookingMapper.toBookingForItemDto(
                     bookingRepository.findFirstByItemIdEqualsAndStatusIsNotAndStartBeforeOrderByStartDesc(
-                            item.getId(), BookingStatus.REJECTED, LocalDateTime.now()));
+                            item.getId(),
+                            BookingStatus.REJECTED,
+                            LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond())));
             BookingForItemDto bookingAfter = BookingMapper.toBookingForItemDto(
                     bookingRepository.findFirstByItemIdEqualsAndStatusIsNotAndStartAfterOrderByStartAsc(
-                            item.getId(), BookingStatus.REJECTED, LocalDateTime.now()));
-            List<Comment> comments = commentRepository.findAllByItemIdEqualsOrderByCreatedDesc(item.getId());
+                            item.getId(),
+                            BookingStatus.REJECTED,
+                            LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond())));
+            List<CommentDto> comments = CommentMapper.toCommentDto(commentRepository.findAllByItemIdEqualsOrderByCreatedDesc(item.getId()));
             itemsForOwner.add(ItemMapper.toItemCommentDto(item, bookingBefore, bookingAfter, comments));
         }
         log.info("Выгружен список item, принадлежащих user {} размером {} записей", owner, itemsForOwner.size());
@@ -183,20 +189,21 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException(String.format(
                     "Ошибка при создании комментария к itemId id " + itemId + ". Предмет c id " + userId + " не найден."));
         }
-        Booking booking = bookingRepository.findFirstByBookerIdEqualsAndItemIdEqualsAndEndBefore(userId, itemId, LocalDateTime.now());
+        LocalDateTime dt = LocalDateTime.now();
+        Booking booking = bookingRepository.findFirstByBookerIdEqualsAndItemIdEqualsAndEndBefore(
+                userId,
+                itemId,
+                LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond()));
         if (booking == null) {
             log.info("Ошибка доступа. Пользователь, не бравший в аренду предмет, не может оставлять к нему комментарии.");
             throw new NoAccessException(
                     "Ошибка доступа. Пользователь, не бравший в аренду предмет, не может оставлять к нему комментарии.");
         }
-//        if (commentDto.getText().isEmpty()) {
-//            log.info("Невозможно оставить пустой комментарий к item {} пользователем {}.", itemId, userId);
-//            throw new ValidationException(String.format(
-//                    "Невозможно оставить пустой комментарий к item %s пользователем %s.", itemId, userId));
-//        }
         Comment newComment = CommentMapper.toComment(commentDto);
         newComment.setAuthor(user.get());
         newComment.setItem(item.get());
+        newComment.setCreated(
+                LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond()));
         Comment returnValue = commentRepository.save(newComment);
         log.info("Создан комментарий {}.", returnValue);
         return CommentMapper.toCommentDto(returnValue);

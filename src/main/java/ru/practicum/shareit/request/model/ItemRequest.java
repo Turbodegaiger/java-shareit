@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-itemId-requests.
- */
 @Data
 @Entity
 @Table(name = "requests")

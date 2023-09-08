@@ -43,12 +43,14 @@ public class ItemRequestMapper {
     }
 
     public static ItemRequest toItemRequest(ItemRequestDto request) {
+        LocalDateTime dt = LocalDateTime.now();
+        LocalDateTime dateTime = LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond());
         if (request == null) {
             return null;
         }
         LocalDateTime created;
         if (request.getCreated() == null) {
-            created = LocalDateTime.now();
+            created = dateTime;
         } else {
             created = LocalDateTime.parse(request.getCreated());
         }

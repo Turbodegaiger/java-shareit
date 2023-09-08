@@ -8,6 +8,7 @@ import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserForUpdateDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -41,9 +42,10 @@ public class UserServiceImpl implements UserService {
         log.info("Пользователь с id = {} удалён.", userId);
     }
 
-    public UserDto updateUser(UserDto user, long userId) {
+    public UserDto updateUser(UserForUpdateDto userUpdate, long userId) {
         User oldUser = repository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Невозможно обновить. Пользователь с id = " + userId + " не найден."));
+        UserDto user = UserMapper.mapToUser(userUpdate, userId);
         if (user.getEmail() != null && !user.getEmail().equals(oldUser.getEmail())) {
             User sameEmailUser = repository.findByEmailEquals(user.getEmail());
             if (sameEmailUser != null) {

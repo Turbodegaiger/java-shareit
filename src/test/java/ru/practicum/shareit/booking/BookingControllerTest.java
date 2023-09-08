@@ -2,9 +2,6 @@ package ru.practicum.shareit.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +9,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.booking.enums.BookingStatus;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -42,8 +34,6 @@ public class BookingControllerTest {
     static UserService userService;
     @MockBean
     static ItemService itemService;
-//    @Autowired
-//    private BookingMapper mapper;
     @Autowired
     private ObjectMapper mapper;
     @Autowired
@@ -66,7 +56,6 @@ public class BookingControllerTest {
             testUser1,
             BookingStatus.APPROVED);
 
-    //  2023-08-31T17:30:30
     void setUp() {
         userService.createUser(testUser1);
         userService.createUser(testUser2);
@@ -75,7 +64,7 @@ public class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void createNewBooking_whenInvoke_thenResponseStatusIsCreatedAndReturnsNewBooking() {
+    void createNewBookingTest_whenInvoke_thenResponseStatusIsCreatedAndReturnsNewBooking() {
         setUp();
         when(bookingService.createBooking(Mockito.any(), anyLong()))
                 .thenReturn(testBookingDto);
@@ -96,7 +85,7 @@ public class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void createNewBooking_whenInvokeWithInvalidField_thenResponseStatusBadRequest() {
+    void createNewBookingTest_whenInvokeWithInvalidField_thenResponseStatusBadRequest() {
         when(bookingService.createBooking(Mockito.any(), anyLong()))
                 .thenReturn(testBookingDto);
 
@@ -113,7 +102,7 @@ public class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void approveOrDenyBooking_whenInvoked_returnApprovedBooking() {
+    void approveOrDenyBookingTest_whenInvoked_returnApprovedBooking() {
         BookingDto approvedTestBooking = testBookingDto;
         approvedTestBooking.setStatus(BookingStatus.APPROVED);
         Boolean approved = true;
@@ -136,7 +125,7 @@ public class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void getBooking_whenInvoked_returnBooking() {
+    void getBookingTest_whenInvoked_returnBooking() {
         when(bookingService.getBooking(testBookingDto.getId(), testUser1.getId()))
                 .thenReturn(testBookingDto);
 
@@ -155,7 +144,7 @@ public class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void getUserBookings_whenInvoked_returnBookingList() {
+    void getUserBookingsTest_whenInvoked_returnBookingList() {
         List<BookingDto> bookings = List.of(testBookingDto);
         when(bookingService.getAllUserBookings(testUser1.getId(), "ALL", 0, 10))
                 .thenReturn(bookings);
@@ -174,7 +163,7 @@ public class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void getOwnerBookings_whenInvoked_returnBookingList() {
+    void getOwnerBookingsTest_whenInvoked_returnBookingList() {
         List<BookingDto> bookings = List.of(testBookingDto);
         when(bookingService.getAllOwnerBookings(testUser2.getId(), "ALL", 0, 10))
                 .thenReturn(bookings);
