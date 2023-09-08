@@ -81,6 +81,8 @@ public class ItemServiceTest {
 
     @Test
     void createItemTest_ifValid_returnItemDto() {
+//        ItemDto itemDto = testItemDto1;
+//        itemDto.setId(0L);
         when(itemRepository.save(testItem1)).thenReturn(testItem1);
         when(userRepository.findById(testUserDto1.getId())).thenReturn(Optional.ofNullable(user1));
         ItemDto result = itemService.createItem(testItemDto1, testUserDto1.getId());

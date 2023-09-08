@@ -45,7 +45,7 @@ public class ItemMapper {
 
     public static Item toItem(ItemDto itemDto) {
         return new Item(
-                0L,
+                itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
