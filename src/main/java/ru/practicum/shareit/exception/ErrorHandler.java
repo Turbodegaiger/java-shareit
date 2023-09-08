@@ -73,6 +73,6 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleDataIntegrityViolation(final DataIntegrityViolationException exception) {
         log.info("При проверке полученных данных возникла ошибка: {}", exception.getMessage());
-        return new ErrorResponse("Присланные данные не прошли проверку, проверьте содержимое запроса.");
+        return new ErrorResponse("Присланные данные не прошли проверку, проверьте содержимое запроса." + exception.getMessage());
     }
 }
