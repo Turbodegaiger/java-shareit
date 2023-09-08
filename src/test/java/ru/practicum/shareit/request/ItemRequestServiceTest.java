@@ -42,12 +42,12 @@ public class ItemRequestServiceTest {
     private ItemRepository itemRepository;
     LocalDateTime dt = LocalDateTime.now();
     LocalDateTime dateTime = LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond());
-    ItemForResponseDto itemForResponseDto = new ItemForResponseDto(1, "predmet", "prosto predmet", true, 1);
+    ItemForResponseDto itemForResponseDto = new ItemForResponseDto(1, "predmet", "prosto predmet", true, null);
     ItemRequest testItemRequest1 = new ItemRequest(1, "nuzhen predmet", 1, dateTime);
     ItemRequestDto testItemRequestDto1 = ItemRequestMapper.toItemRequestDto(testItemRequest1);
     ItemRequestResponseDto testItemRequestResponseDto = ItemRequestMapper.toItemRequestResponseDto(testItemRequest1, List.of(itemForResponseDto));
     UserDto testUserDto1 = new UserDto(1, "user1", "user1@ya.ru");
-    ItemDto testItemDto1 = new ItemDto(1, "predmet", "prosto predmet", true, 0, 2);
+    ItemDto testItemDto1 = new ItemDto(1, "predmet", "prosto predmet", true, null, 2);
     User testUser1 = new User(1L, "user1", "user1@ya.ru");
     User testUser2 = new User(2L, "user2", "user2@ya.ru");
 

@@ -51,12 +51,12 @@ public class ItemServiceTest {
     @Mock
     private CommentRepository commentRepository;
     LocalDateTime dt = LocalDateTime.now();
-    ItemDto testItemDto1 = new ItemDto(1, "predmet", "prosto predmet", true, 0, 1);
-    ItemForUpdate testItemDtoUpdate1 = new ItemForUpdate("NEWpredmet", "prosto predmet", true, 0, 1);
-    ItemDto updateTest = new ItemDto(1, "NEWpredmet", "prosto predmet", true, 0, 1);
+    ItemDto testItemDto1 = new ItemDto(1, "predmet", "prosto predmet", true, null, 1);
+    ItemForUpdate testItemDtoUpdate1 = new ItemForUpdate("NEWpredmet", "prosto predmet", true, null, 1);
+    ItemDto updateTest = new ItemDto(1, "NEWpredmet", "prosto predmet", true, null, 1);
     User user1 = new User(1L, "user1", "user1@ya.ru");
     UserDto testUserDto1 = new UserDto(1, "user1", "user1@ya.ru");
-    Item testItem1 = new Item(1L, "predmet", "prosto predmet", true, 0L, user1);
+    Item testItem1 = new Item(1L, "predmet", "prosto predmet", true, null, user1);
     CommentDto testCommentDto = new CommentDto(
             1,
             "predmet prosto vayyyy",
@@ -93,7 +93,7 @@ public class ItemServiceTest {
     @Test
     void createItemTest_ifIncorrectRequestId_returnValidationException() {
         ItemDto testItemDto2 = testItemDto1;
-        testItemDto2.setRequestId(3);
+        testItemDto2.setRequestId(3L);
         long requestId = 3;
 
         when(requestRepository.findById(requestId)).thenReturn(Optional.empty());

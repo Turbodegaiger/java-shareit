@@ -15,6 +15,6 @@ public class ItemForUpdate {
     @Size(min = 1, max = 512)
     private String description;
     private Boolean available;
-    private long requestId;
+    private Long requestId;
     private long ownerId;
 }

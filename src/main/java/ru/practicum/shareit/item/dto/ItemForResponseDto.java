@@ -24,5 +24,5 @@ public class ItemForResponseDto {
     private Boolean available;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
-    private long requestId;
+    private Long requestId;
 }

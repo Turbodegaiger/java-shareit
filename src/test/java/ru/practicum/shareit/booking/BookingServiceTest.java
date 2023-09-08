@@ -45,7 +45,7 @@ public class BookingServiceTest {
     private ItemRepository itemRepository;
     Pageable pageParams = PageRequest.of(
             fromToPage(0, 10), 10, Sort.by(Sort.Direction.DESC, "start"));
-    private final ItemDto testItemDto1 = new ItemDto(1, "predmet", "prosto predmet", true, 0, 2);
+    private final ItemDto testItemDto1 = new ItemDto(1, "predmet", "prosto predmet", true, null, 2);
     private final UserDto testUserDto1 = new UserDto(1L, "user1", "user1@ya.ru");
     User testUser1 = new User(1L, "user1", "user1@ya.ru");
     User testUser2 = new User(2L, "user2", "user2@ya.ru");
@@ -57,7 +57,7 @@ public class BookingServiceTest {
             "predmet",
             "prosto predmet",
             true,
-            0L,
+            null,
             testUser2);
     private final Booking testBooking1 = new Booking(
             1L,

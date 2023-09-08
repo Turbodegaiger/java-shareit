@@ -38,7 +38,7 @@ public class BookingControllerTest {
     private ObjectMapper mapper;
     @Autowired
     private MockMvc mvc;
-    private final ItemDto testItem1 = new ItemDto(1, "predmet", "prosto predmet", true, 0, 1);
+    private final ItemDto testItem1 = new ItemDto(1, "predmet", "prosto predmet", true, null, 1);
     private final UserDto testUser1 = new UserDto(1L, "user1", "user1@ya.ru");
     private final UserDto testUser2 = new UserDto(2L, "user2", "user2@ya.ru");
     private final BookingDto testBookingDto = new BookingDto(

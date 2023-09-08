@@ -38,7 +38,7 @@ public class ItemRequestControllerTest {
     @Autowired
     private MockMvc mvc;
     String userIdHeader = "X-Sharer-User-Id";
-    ItemForResponseDto itemForResponseDto = new ItemForResponseDto(1, "predmet", "prosto predmet", true, 1);
+    ItemForResponseDto itemForResponseDto = new ItemForResponseDto(1, "predmet", "prosto predmet", true, null);
     ItemRequest testItemRequest1 = new ItemRequest(1, "nuzhen predmet", 2, LocalDateTime.now());
     ItemRequestDto testItemRequestDto1 = ItemRequestMapper.toItemRequestDto(testItemRequest1);
     ItemRequestResponseDto testItemRequestResponseDto = ItemRequestMapper.toItemRequestResponseDto(testItemRequest1, List.of(itemForResponseDto));

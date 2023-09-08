@@ -39,8 +39,8 @@ public class ItemControllerTest {
     @Autowired
     private MockMvc mvc;
     String userIdHeader = "X-Sharer-User-Id";
-    ItemDto testItemDto1 = new ItemDto(1, "predmet", "prosto predmet", true, 0, 1);
-    ItemForUpdate testItemUpdateDto1 = new ItemForUpdate("NEWpredmet", "prosto predmet", true, 0, 1);
+    ItemDto testItemDto1 = new ItemDto(1, "predmet", "prosto predmet", true, null, 1);
+    ItemForUpdate testItemUpdateDto1 = new ItemForUpdate("NEWpredmet", "prosto predmet", true, null, 1);
     ItemCommentDto testItemCommentDto1 = new ItemCommentDto(
             1,
             "predmet",
@@ -49,7 +49,7 @@ public class ItemControllerTest {
             new BookingForItemDto(),
             new BookingForItemDto(),
             List.of(new CommentDto()));
-    ItemDto updateTest = new ItemDto(1, "NEWpredmet", "prosto predmet", true, 0, 1);
+    ItemDto updateTest = new ItemDto(1, "NEWpredmet", "prosto predmet", true, null, 1);
     UserDto testUserDto1 = new UserDto(1, "user1", "user1@ya.ru");
     CommentDto testCommentDto = new CommentDto(
             1,
