@@ -113,7 +113,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new WrongInputDataException(String.format(
                     "Переданы некорректные параметры from %s или size %s, проверьте правильность запроса.", from, size));
         }
-        float result = (float) from/size;
+        float result = (float) from / size;
         return (int) Math.ceil(result);
     }
 }
