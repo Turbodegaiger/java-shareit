@@ -22,9 +22,9 @@ public class ItemController {
     @Autowired
     private final ItemService itemService;
 
-    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto createItem(@RequestBody @Valid ItemDto item,
+    @PostMapping
+    public ItemDto createItem(@Valid @RequestBody ItemDto item,
                               @RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на создание itemId.");
         return itemService.createItem(item, userId);
