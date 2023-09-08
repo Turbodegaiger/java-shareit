@@ -279,7 +279,7 @@ public class ItemServiceTest {
     }
 
     private int fromToPage(int from, int size) {
-        float result = (float) from/size;
+        float result = (float) from / size;
         return (int) Math.ceil(result);
     }
 }

@@ -52,7 +52,7 @@ public class UserServiceTest {
     void removeUserTest_ifNoSuchUser_NotFoundException() {
         doThrow(IllegalArgumentException.class).when(userRepository).deleteById(0L);
 
-        assertThrows(NotFoundException.class, () -> {userService.removeUser(0L);});
+        assertThrows(NotFoundException.class, () -> userService.removeUser(0L));
     }
 
     @Test
