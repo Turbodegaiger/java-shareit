@@ -177,6 +177,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto createComment(CommentDto commentDto, long itemId, long userId) {
+        LocalDateTime dt = LocalDateTime.now();
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             log.info("Ошибка при создании комментария к itemId id " + itemId + ". Пользователь " + userId + " не найден.");
@@ -189,7 +190,6 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException(String.format(
                     "Ошибка при создании комментария к itemId id " + itemId + ". Предмет c id " + userId + " не найден."));
         }
-        LocalDateTime dt = LocalDateTime.now();
         Booking booking = bookingRepository.findFirstByBookerIdEqualsAndItemIdEqualsAndEndBefore(
                 userId,
                 itemId,
@@ -202,8 +202,7 @@ public class ItemServiceImpl implements ItemService {
         Comment newComment = CommentMapper.toComment(commentDto);
         newComment.setAuthor(user.get());
         newComment.setItem(item.get());
-        newComment.setCreated(
-                LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond()));
+        newComment.setCreated(LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute()));
         Comment returnValue = commentRepository.save(newComment);
         log.info("Создан комментарий {}.", returnValue);
         return CommentMapper.toCommentDto(returnValue);
@@ -218,4 +217,8 @@ public class ItemServiceImpl implements ItemService {
         float result = (float) from / size;
         return (int) Math.ceil(result);
     }
+//
+//    public LocalDateTime getDateTime() {
+//        return LocalDateTime.now();
+//    }
 }

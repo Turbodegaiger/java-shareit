@@ -43,7 +43,9 @@ public class ItemController {
     @ResponseStatus(HttpStatus.OK)
     public ItemCommentDto getItem(@PathVariable long itemId, @RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на получение itemId id = {}.", itemId);
-        return itemService.getItem(itemId, userId);
+        ItemCommentDto returnValue = itemService.getItem(itemId, userId);
+        log.info("Отправлен ответ на запрос item id = {}. Тело ответа: {}", itemId, returnValue);
+        return returnValue;
     }
 
     @GetMapping

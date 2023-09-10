@@ -27,4 +27,18 @@ public class ItemCommentDto {
     private BookingForItemDto lastBooking;
     private BookingForItemDto nextBooking;
     private List<CommentDto> comments;
+
+    @Override
+    public String toString() {
+        return "ItemCommentDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", available=" + available +
+                ", ownerId=" + ownerId +
+                ", lastBooking=" + lastBooking +
+                ", nextBooking=" + nextBooking +
+                ", comments=" + comments +
+                '}';
+    }
 }

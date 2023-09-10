@@ -25,6 +25,7 @@ import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -232,7 +233,9 @@ public class ItemServiceTest {
         Comment testComment = CommentMapper.toComment(testCommentDto);
         testComment.setAuthor(user1);
         testComment.setItem(testItem1);
-        testComment.setCreated(LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond()));
+        testComment.setCreated(LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute()));
+//        MockedStatic<LocalDateTime> mockedStatic = mockStatic(LocalDateTime.class);
+//        mockedStatic.when(LocalDateTime::now).thenReturn(dt);
         when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(user1));
         when(itemRepository.findById(itemId)).thenReturn(Optional.ofNullable(testItem1));
         when(bookingRepository.findFirstByBookerIdEqualsAndItemIdEqualsAndEndBefore(
@@ -240,11 +243,17 @@ public class ItemServiceTest {
                 itemId,
                 LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond())))
                 .thenReturn(testBooking1);
-        when(commentRepository.save(testComment)).thenReturn(testComment);
+        Comment testComment2 = new Comment(
+                1L,
+                "predmet prosto vayyyy",
+                testItem1,
+                UserMapper.mapToNewUser(testUserDto1),
+                dt);
+        when(commentRepository.save(testComment)).thenReturn(testComment2);
 
         CommentDto commentDto = itemService.createComment(testCommentDto, itemId, userId);
 
-        assertEquals(CommentMapper.toCommentDto(testComment), commentDto);
+        assertEquals(CommentMapper.toCommentDto(testComment2), commentDto);
     }
 
     @Test
