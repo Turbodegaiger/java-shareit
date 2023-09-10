@@ -16,5 +16,9 @@ public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> 
             "order by r.created desc")
     List<ItemRequest> findByRequestorIdEqualsOrderByCreatedDesc(long userId);
 
+    @Query("select NEW ru.practicum.shareit.request.model.ItemRequest(r.id, r.description, r.requestorId, r.created) " +
+            "from ItemRequest as r " +
+            "where r.requestorId != ?1 " +
+            "order by r.created desc")
     Page<ItemRequest> findAllByRequestorIdNotOrderByCreatedDesc(long userId, Pageable pageable);
 }
