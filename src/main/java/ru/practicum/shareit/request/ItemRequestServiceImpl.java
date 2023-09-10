@@ -78,7 +78,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             log.info("Невозможно получить список request, пользователь с id = " + userId + " не найден.");
             throw new NotFoundException("Невозможно получить список request, пользователь с id = " + userId + " не найден.");
         }
-        List<ItemRequest> requests = requestRepository.findByRequestorIdEqualsOrderByCreatedDesc(userId);
+        List<ItemRequest> requests = requestRepository.searchByRequestor(userId);
         List<ItemRequestResponseDto> requestResponseList = new ArrayList<>();
         for (ItemRequest request : requests) {
             List<ItemForResponseDto> items = itemRepository.findAllByRequestIdEquals(request.getId());
@@ -96,7 +96,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new NotFoundException("Невозможно получить список request, пользователь с id = " + userId + " не найден.");
         }
         Pageable pageParams = PageRequest.of(fromToPage(from, size), size, Sort.by(Sort.Direction.DESC, "created"));
-        Page<ItemRequest> requests = requestRepository.findAllByRequestorIdNotOrderByCreatedDesc(userId, pageParams);
+        Page<ItemRequest> requests = requestRepository.searchAllPageable(userId, pageParams);
         List<ItemRequestResponseDto> requestResponseList = new ArrayList<>();
         for (ItemRequest request : requests) {
             List<ItemForResponseDto> items = itemRepository.findAllByRequestIdEquals(request.getId());
