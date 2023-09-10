@@ -52,7 +52,7 @@ public class ErrorHandler {
             return new ErrorResponse("Произошла непредвиденная ошибка.");
         }
         log.info(exception.toString());
-        return new ErrorResponse(exception.getMessage());
+        return new ErrorResponse(exception.getMessage() + exception.getLocalizedMessage() + exception.getCause());
     }
 
     @ExceptionHandler
