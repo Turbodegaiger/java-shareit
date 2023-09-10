@@ -5,7 +5,6 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,15 +14,12 @@ public class CommentMapper {
         if (comment == null) {
             return new CommentDto();
         }
-        LocalDateTime dt = comment.getCreated();
         return new CommentDto(
                 comment.getId(),
                 comment.getText(),
                 comment.getItem().getId(),
                 comment.getAuthor().getName(),
-                LocalDateTime.of(
-                        dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond(), dt.getNano())
-                        .toString());
+                comment.getCreated().toString());
     }
 
     public static List<CommentDto> toCommentDto(Iterable<Comment> comments) {

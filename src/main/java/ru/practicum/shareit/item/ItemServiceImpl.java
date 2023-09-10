@@ -217,8 +217,4 @@ public class ItemServiceImpl implements ItemService {
         float result = (float) from / size;
         return (int) Math.ceil(result);
     }
-//
-//    public LocalDateTime getDateTime() {
-//        return LocalDateTime.now();
-//    }
 }
