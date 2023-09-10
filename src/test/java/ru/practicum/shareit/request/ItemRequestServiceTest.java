@@ -105,7 +105,7 @@ public class ItemRequestServiceTest {
     void getRequestsTest_ifOk_returnItemRequestResponseDto() {
         long userId = 1;
         when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(testUser1));
-        when(requestRepository.findByRequestorIdEqualsOrderByCreatedDesc(userId)).thenReturn(List.of(testItemRequest1));
+        when(requestRepository.searchByRequestor(userId)).thenReturn(List.of(testItemRequest1));
         when(itemRepository.findAllByRequestIdEquals(testItemRequest1.getId())).thenReturn(List.of(itemForResponseDto));
 
         List<ItemRequestResponseDto> result = requestService.getRequests(userId);
@@ -127,7 +127,7 @@ public class ItemRequestServiceTest {
         Pageable pageParams = PageRequest.of(
                 fromToPage(0, 10), 10, Sort.by(Sort.Direction.DESC, "created"));
         when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(testUser1));
-        when(requestRepository.findAllByRequestorIdNotOrderByCreatedDesc(userId, pageParams))
+        when(requestRepository.searchAllPageable(userId, pageParams))
                 .thenReturn(new PageImpl<>(List.of(testItemRequest1)));
         when(itemRepository.findAllByRequestIdEquals(testItemRequest1.getId()))
                 .thenReturn(List.of(itemForResponseDto));
