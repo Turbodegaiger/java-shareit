@@ -78,7 +78,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             log.info("Невозможно получить список request, пользователь с id = " + userId + " не найден.");
             throw new NotFoundException("Невозможно получить список request, пользователь с id = " + userId + " не найден.");
         }
-        List<ItemRequest> requests = requestRepository.findAllByRequestorIdEqualsOrderByCreatedDesc(userId);
+        List<ItemRequest> requests = requestRepository.findByRequestorIdEqualsOrderByCreatedDesc(userId);
         List<ItemRequestResponseDto> requestResponseList = new ArrayList<>();
         for (ItemRequest request : requests) {
             List<ItemForResponseDto> items = itemRepository.findAllByRequestIdEquals(request.getId());

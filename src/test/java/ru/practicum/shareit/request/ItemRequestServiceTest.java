@@ -105,7 +105,7 @@ public class ItemRequestServiceTest {
     void getRequestsTest_ifOk_returnItemRequestResponseDto() {
         long userId = 1;
         when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(testUser1));
-        when(requestRepository.findAllByRequestorIdEqualsOrderByCreatedDesc(userId)).thenReturn(List.of(testItemRequest1));
+        when(requestRepository.findByRequestorIdEqualsOrderByCreatedDesc(userId)).thenReturn(List.of(testItemRequest1));
         when(itemRepository.findAllByRequestIdEquals(testItemRequest1.getId())).thenReturn(List.of(itemForResponseDto));
 
         List<ItemRequestResponseDto> result = requestService.getRequests(userId);
