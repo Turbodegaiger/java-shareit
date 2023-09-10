@@ -202,7 +202,7 @@ public class ItemServiceImpl implements ItemService {
         Comment newComment = CommentMapper.toComment(commentDto);
         newComment.setAuthor(user.get());
         newComment.setItem(item.get());
-        newComment.setCreated(LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute()));
+        newComment.setCreated(LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond()));
         Comment returnValue = commentRepository.save(newComment);
         log.info("Создан комментарий {}.", returnValue);
         return CommentMapper.toCommentDto(returnValue);

@@ -19,7 +19,7 @@ public class CommentMapper {
                 comment.getText(),
                 comment.getItem().getId(),
                 comment.getAuthor().getName(),
-                comment.getCreated().plusNanos(1).toString());
+                comment.getCreated().plusSeconds(1).toString());
     }
 
     public static List<CommentDto> toCommentDto(Iterable<Comment> comments) {

@@ -233,7 +233,7 @@ public class ItemServiceTest {
         Comment testComment = CommentMapper.toComment(testCommentDto);
         testComment.setAuthor(user1);
         testComment.setItem(testItem1);
-        testComment.setCreated(LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute()));
+        testComment.setCreated(LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond()));
 //        MockedStatic<LocalDateTime> mockedStatic = mockStatic(LocalDateTime.class);
 //        mockedStatic.when(LocalDateTime::now).thenReturn(dt);
         when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(user1));
