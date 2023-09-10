@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
-@Entity
+@Entity(name = "ItemRequest")
 @Table(name = "requests")
 @AllArgsConstructor
 @NoArgsConstructor
