@@ -15,6 +15,7 @@ import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -39,7 +40,8 @@ public class ItemRequestControllerTest {
     private MockMvc mvc;
     String userIdHeader = "X-Sharer-User-Id";
     ItemForResponseDto itemForResponseDto = new ItemForResponseDto(1, "predmet", "prosto predmet", true, null);
-    ItemRequest testItemRequest1 = new ItemRequest(1, "nuzhen predmet", 2, LocalDateTime.now());
+    User user1 = new User(1L, "user1", "user1@ya.ru");
+    ItemRequest testItemRequest1 = new ItemRequest(1, "nuzhen predmet", user1, LocalDateTime.now());
     ItemRequestDto testItemRequestDto1 = ItemRequestMapper.toItemRequestDto(testItemRequest1);
     ItemRequestResponseDto testItemRequestResponseDto = ItemRequestMapper.toItemRequestResponseDto(testItemRequest1, List.of(itemForResponseDto));
     UserDto testUserDto1 = new UserDto(1, "user1", "user1@ya.ru");

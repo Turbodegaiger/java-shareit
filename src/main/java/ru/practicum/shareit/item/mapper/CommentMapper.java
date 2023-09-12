@@ -5,6 +5,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,12 +31,12 @@ public class CommentMapper {
         return commentDtoList;
     }
 
-    public static Comment toComment(CommentDto commentDto) {
+    public static Comment toComment(CommentDto commentDto, Item item, User user, LocalDateTime dateTime) {
         return new Comment(
                 commentDto.getId(),
                 commentDto.getText(),
-                new Item(),
-                new User(),
-                null);
+                item,
+                user,
+                dateTime);
     }
 }

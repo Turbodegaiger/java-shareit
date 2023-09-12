@@ -11,10 +11,10 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemRequestDto {
-    long id;
+    private long id;
     @NotEmpty(message = "Описание не может быть null")
     @Size(min = 1, max = 512)
-    String description;
-    long requestorId;
-    String created;
+    private String description;
+    private long requesterId;
+    private String created;
 }

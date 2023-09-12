@@ -83,10 +83,7 @@ public class BookingServiceTest {
                 testUserDto1,
                 BookingStatus.WAITING);
         expectedTestBookingDto.getItem().setAvailable(false);
-        Booking booking = BookingMapper.toBooking(testShortBooking1);
-        booking.setBooker(testUser1);
-        booking.setItem(testItem1);
-        booking.setStatus(BookingStatus.WAITING);
+        Booking booking = BookingMapper.toNewBooking(testShortBooking1,testItem1, testUser1);
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser1));
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(testItem1));
         when(bookingRepository.save(booking))

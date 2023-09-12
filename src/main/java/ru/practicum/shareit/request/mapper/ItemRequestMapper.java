@@ -4,6 +4,7 @@ import ru.practicum.shareit.item.dto.ItemForResponseDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class ItemRequestMapper {
         return new ItemRequestResponseDto(
                 request.getId(),
                 request.getDescription(),
-                request.getRequestorId(),
+                request.getRequester().getId(),
                 request.getCreated().toString(),
                 items);
     }
@@ -30,7 +31,7 @@ public class ItemRequestMapper {
         return new ItemRequestDto(
                 request.getId(),
                 request.getDescription(),
-                request.getRequestorId(),
+                request.getRequester().getId(),
                 request.getCreated().toString());
     }
 
@@ -42,22 +43,14 @@ public class ItemRequestMapper {
         return requestDtoList;
     }
 
-    public static ItemRequest toItemRequest(ItemRequestDto request) {
-        LocalDateTime dt = LocalDateTime.now();
-        LocalDateTime dateTime = LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond());
+    public static ItemRequest toItemRequest(ItemRequestDto request, User requester, LocalDateTime dateTime) {
         if (request == null) {
             return null;
-        }
-        LocalDateTime created;
-        if (request.getCreated() == null) {
-            created = dateTime;
-        } else {
-            created = LocalDateTime.parse(request.getCreated());
         }
         return new ItemRequest(
                 request.getId(),
                 request.getDescription(),
-                request.getRequestorId(),
-                created);
+                requester,
+                dateTime);
     }
 }

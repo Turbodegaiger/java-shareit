@@ -44,26 +44,24 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public BookingDto createBooking(BookingShortDto bookingDto, long userId) {
-        Booking booking = BookingMapper.toBooking(bookingDto);
-        if (booking.getStart().isAfter(booking.getEnd())
-            || booking.getStart().isBefore(LocalDateTime.now().minusSeconds(5))
-            || booking.getEnd().isBefore(LocalDateTime.now().minusSeconds(5))
-            || booking.getEnd().isEqual(booking.getStart())) {
-            log.info("Невозможно создать бронирование, некорректные даты начала и окончания.");
-            throw new ValidationException("Невозможно создать бронирование, некорректные даты начала и окончания.");
-        }
-        Optional<User> booker = userRepository.findById(userId);
-        if (booker.isEmpty()) {
-            log.info("Невозможно создать бронирование, пользователь с id = " + userId + " не найден.");
-            throw new NotFoundException("Невозможно создать бронирование, пользователь с id = " + userId + " не найден.");
-        }
-        booking.setBooker(booker.get());
         Optional<Item> item = itemRepository.findById(bookingDto.getItemId());
+        Optional<User> booker = userRepository.findById(userId);
         if (item.isEmpty()) {
             log.info("Невозможно создать бронирование, предмет с id = " + bookingDto.getItemId() + " не найден.");
             throw new NotFoundException("Невозможно создать бронирование, предмет с id = " + bookingDto.getItemId() + " не найден.");
         }
-        booking.setItem(item.get());
+        if (booker.isEmpty()) {
+            log.info("Невозможно создать бронирование, пользователь с id = " + userId + " не найден.");
+            throw new NotFoundException("Невозможно создать бронирование, пользователь с id = " + userId + " не найден.");
+        }
+        Booking booking = BookingMapper.toNewBooking(bookingDto, item.get(), booker.get());
+        if (booking.getStart().isAfter(booking.getEnd())
+                || booking.getStart().isBefore(LocalDateTime.now().minusSeconds(5))
+                || booking.getEnd().isBefore(LocalDateTime.now().minusSeconds(5))
+                || booking.getEnd().isEqual(booking.getStart())) {
+            log.info("Невозможно создать бронирование, некорректные даты начала и окончания.");
+            throw new ValidationException("Невозможно создать бронирование, некорректные даты начала и окончания.");
+        }
         if (!booking.getItem().getAvailable()) {
                 log.info("Item {} уже забронирован на выбранные даты, бронирование недоступно.", booking.getItem().getId());
                 throw new NoAccessException("Item " + booking.getItem().getId() + " уже забронирован на выбранные даты.");
@@ -75,7 +73,6 @@ public class BookingServiceImpl implements BookingService {
                     booking.getBooker().getId(), booking.getItem().getId()));
         }
         booking.getItem().setAvailable(false);
-        booking.setStatus(BookingStatus.WAITING);
         Booking newBooking = bookingRepository.save(booking);
         log.info("Создано бронирование {}.", newBooking);
         return BookingMapper.toBookingDto(newBooking);
@@ -131,7 +128,7 @@ public class BookingServiceImpl implements BookingService {
         Pageable pageParams = PageRequest.of(fromToPage(from, size), size, Sort.by(Sort.Direction.DESC, "start"));
         List<BookingDto> bookingList = new ArrayList<>();
         LocalDateTime dt = LocalDateTime.now();
-        LocalDateTime currentTime = LocalDateTime.of(
+        LocalDateTime dateTime = LocalDateTime.of(
                 dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond());
         switch (searchState) {
             case ALL:
@@ -140,15 +137,15 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case CURRENT:
                 bookingList = BookingMapper.toBookingDto(bookingRepository
-                        .findAllByBookerIdEqualsAndStartBeforeAndEndAfter(userId, currentTime, currentTime, pageParams));
+                        .findAllByBookerIdEqualsAndStartBeforeAndEndAfter(userId, dateTime, dateTime, pageParams));
                 break;
             case PAST:
                 bookingList = BookingMapper.toBookingDto(bookingRepository
-                        .findAllByBookerIdEqualsAndEndBefore(userId, currentTime, pageParams));
+                        .findAllByBookerIdEqualsAndEndBefore(userId, dateTime, pageParams));
                 break;
             case FUTURE:
                 bookingList = BookingMapper.toBookingDto(bookingRepository
-                        .findAllByBookerIdEqualsAndStartAfter(userId, currentTime, pageParams));
+                        .findAllByBookerIdEqualsAndStartAfter(userId, dateTime, pageParams));
                 break;
             case WAITING:
                 bookingList = BookingMapper.toBookingDto(bookingRepository
@@ -178,7 +175,7 @@ public class BookingServiceImpl implements BookingService {
         Pageable pageParams = PageRequest.of(fromToPage(from, size), size, Sort.by(Sort.Direction.DESC, "start"));
         List<BookingDto> bookingList = new ArrayList<>();
         LocalDateTime dt = LocalDateTime.now();
-        LocalDateTime currentTime = LocalDateTime.of(
+        LocalDateTime dateTime = LocalDateTime.of(
                 dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond());
         switch (searchState) {
             case ALL:
@@ -187,15 +184,15 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case CURRENT:
                 bookingList = BookingMapper.toBookingDto(bookingRepository
-                        .findAllByItemOwnerIdEqualsAndStartBeforeAndEndAfter(userId, currentTime, currentTime, pageParams));
+                        .findAllByItemOwnerIdEqualsAndStartBeforeAndEndAfter(userId, dateTime, dateTime, pageParams));
                 break;
             case PAST:
                 bookingList = BookingMapper.toBookingDto(bookingRepository
-                        .findAllByItemOwnerIdEqualsAndEndBefore(userId, currentTime, pageParams));
+                        .findAllByItemOwnerIdEqualsAndEndBefore(userId, dateTime, pageParams));
                 break;
             case FUTURE:
                 bookingList = BookingMapper.toBookingDto(bookingRepository
-                        .findAllByItemOwnerIdEqualsAndStartAfter(userId, currentTime, pageParams));
+                        .findAllByItemOwnerIdEqualsAndStartAfter(userId, dateTime, pageParams));
                 break;
             case WAITING:
                 bookingList = BookingMapper.toBookingDto(bookingRepository

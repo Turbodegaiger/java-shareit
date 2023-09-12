@@ -40,14 +40,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public ItemRequestDto createRequest(ItemRequestDto request, long userId) {
         LocalDateTime dt = LocalDateTime.now();
         LocalDateTime dateTime = LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond());
-        Optional<User> requestor = userRepository.findById(userId);
-        if (requestor.isEmpty()) {
+        Optional<User> requester = userRepository.findById(userId);
+        if (requester.isEmpty()) {
             log.info("Невозможно создать request, пользователь с id = " + userId + " не найден.");
             throw new NotFoundException("Невозможно создать request, пользователь с id = " + userId + " не найден.");
         }
-        ItemRequest newRequest = ItemRequestMapper.toItemRequest(request);
-        newRequest.setRequestorId(userId);
-        newRequest.setCreated(dateTime);
+        ItemRequest newRequest = ItemRequestMapper.toItemRequest(request, requester.get(), dateTime);
         ItemRequest returnValue = requestRepository.save(newRequest);
         log.info("Создан request: {}", returnValue);
         return ItemRequestMapper.toItemRequestDto(returnValue);
@@ -78,7 +76,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             log.info("Невозможно получить список request, пользователь с id = " + userId + " не найден.");
             throw new NotFoundException("Невозможно получить список request, пользователь с id = " + userId + " не найден.");
         }
-        List<ItemRequest> requests = requestRepository.searchByRequestor(userId);
+        List<ItemRequest> requests = requestRepository.findByRequesterIdEqualsOrderByCreatedDesc(userId);
         List<ItemRequestResponseDto> requestResponseList = new ArrayList<>();
         for (ItemRequest request : requests) {
             List<ItemForResponseDto> items = itemRepository.findAllByRequestIdEquals(request.getId());
@@ -96,7 +94,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new NotFoundException("Невозможно получить список request, пользователь с id = " + userId + " не найден.");
         }
         Pageable pageParams = PageRequest.of(fromToPage(from, size), size, Sort.by(Sort.Direction.DESC, "created"));
-        Page<ItemRequest> requests = requestRepository.searchAllPageable(userId, pageParams);
+        Page<ItemRequest> requests = requestRepository.findAllByRequesterIdNotOrderByCreatedDesc(userId, pageParams);
         List<ItemRequestResponseDto> requestResponseList = new ArrayList<>();
         for (ItemRequest request : requests) {
             List<ItemForResponseDto> items = itemRepository.findAllByRequestIdEquals(request.getId());

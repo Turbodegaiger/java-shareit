@@ -12,12 +12,12 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ItemRequestResponseDto {
-    long id;
+    private long id;
     @NotEmpty(message = "Описание не может быть null")
     @Size(min = 1, max = 512)
-    String description;
-    long requestorId;
+    private String description;
+    private long requesterId;
     @NotNull
-    String created;
-    List<ItemForResponseDto> items;
+    private String created;
+    private List<ItemForResponseDto> items;
 }

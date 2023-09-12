@@ -10,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemForResponseDto;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -18,7 +17,6 @@ import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -43,13 +41,10 @@ public class ItemRequestServiceTest {
     LocalDateTime dt = LocalDateTime.now();
     LocalDateTime dateTime = LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond());
     ItemForResponseDto itemForResponseDto = new ItemForResponseDto(1, "predmet", "prosto predmet", true, null);
-    ItemRequest testItemRequest1 = new ItemRequest(1, "nuzhen predmet", 1, dateTime);
+    User testUser1 = new User(1L, "user1", "user1@ya.ru");
+    ItemRequest testItemRequest1 = new ItemRequest(1, "nuzhen predmet", testUser1, dateTime);
     ItemRequestDto testItemRequestDto1 = ItemRequestMapper.toItemRequestDto(testItemRequest1);
     ItemRequestResponseDto testItemRequestResponseDto = ItemRequestMapper.toItemRequestResponseDto(testItemRequest1, List.of(itemForResponseDto));
-    UserDto testUserDto1 = new UserDto(1, "user1", "user1@ya.ru");
-    ItemDto testItemDto1 = new ItemDto(1, "predmet", "prosto predmet", true, null, 2);
-    User testUser1 = new User(1L, "user1", "user1@ya.ru");
-    User testUser2 = new User(2L, "user2", "user2@ya.ru");
 
     @Test
     void createRequestTest_ifValid_returnItemRequestDto() {
@@ -105,7 +100,7 @@ public class ItemRequestServiceTest {
     void getRequestsTest_ifOk_returnItemRequestResponseDto() {
         long userId = 1;
         when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(testUser1));
-        when(requestRepository.searchByRequestor(userId)).thenReturn(List.of(testItemRequest1));
+        when(requestRepository.findByRequesterIdEqualsOrderByCreatedDesc(userId)).thenReturn(List.of(testItemRequest1));
         when(itemRepository.findAllByRequestIdEquals(testItemRequest1.getId())).thenReturn(List.of(itemForResponseDto));
 
         List<ItemRequestResponseDto> result = requestService.getRequests(userId);
@@ -127,7 +122,7 @@ public class ItemRequestServiceTest {
         Pageable pageParams = PageRequest.of(
                 fromToPage(0, 10), 10, Sort.by(Sort.Direction.DESC, "created"));
         when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(testUser1));
-        when(requestRepository.searchAllPageable(userId, pageParams))
+        when(requestRepository.findAllByRequesterIdNotOrderByCreatedDesc(userId, pageParams))
                 .thenReturn(new PageImpl<>(List.of(testItemRequest1)));
         when(itemRepository.findAllByRequestIdEquals(testItemRequest1.getId()))
                 .thenReturn(List.of(itemForResponseDto));

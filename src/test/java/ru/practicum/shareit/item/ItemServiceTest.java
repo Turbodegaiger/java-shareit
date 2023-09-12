@@ -82,8 +82,6 @@ public class ItemServiceTest {
 
     @Test
     void createItemTest_ifValid_returnItemDto() {
-//        ItemDto itemDto = testItemDto1;
-//        itemDto.setId(0L);
         when(itemRepository.save(testItem1)).thenReturn(testItem1);
         when(userRepository.findById(testUserDto1.getId())).thenReturn(Optional.ofNullable(user1));
         ItemDto result = itemService.createItem(testItemDto1, testUserDto1.getId());
@@ -97,6 +95,7 @@ public class ItemServiceTest {
         testItemDto2.setRequestId(3L);
         long requestId = 3;
 
+        when(userRepository.findById(testItemDto2.getOwnerId())).thenReturn(Optional.of(user1));
         when(requestRepository.findById(requestId)).thenReturn(Optional.empty());
 
         assertThrows(ValidationException.class, () -> itemService.createItem(testItemDto2, testUserDto1.getId()));
@@ -117,9 +116,8 @@ public class ItemServiceTest {
     void updateItemTest_ifValid_returnUpdatedItemDto() {
         long userId = 1;
         long itemId = 1;
-        Item updateItem = ItemMapper.toItem(updateTest);
+        Item updateItem = ItemMapper.toItem(updateTest, user1, true, null);
         updateItem.setId(itemId);
-        updateItem.setOwner(user1);
         when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(user1));
         when(itemRepository.findById(itemId)).thenReturn(Optional.ofNullable(testItem1));
         when(itemRepository.save(updateItem)).thenReturn(updateItem);
@@ -230,12 +228,8 @@ public class ItemServiceTest {
     void createCommentTest_ifOk_returnCommentDto() {
         long itemId = 1;
         long userId = 1;
-        Comment testComment = CommentMapper.toComment(testCommentDto);
-        testComment.setAuthor(user1);
-        testComment.setItem(testItem1);
-        testComment.setCreated(LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond()));
-//        MockedStatic<LocalDateTime> mockedStatic = mockStatic(LocalDateTime.class);
-//        mockedStatic.when(LocalDateTime::now).thenReturn(dt);
+        LocalDateTime dateTime = LocalDateTime.of(dt.getYear(), dt.getMonth(), dt.getDayOfMonth(), dt.getHour(), dt.getMinute(), dt.getSecond());
+        Comment testComment = CommentMapper.toComment(testCommentDto, testItem1, user1, dateTime);
         when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(user1));
         when(itemRepository.findById(itemId)).thenReturn(Optional.ofNullable(testItem1));
         when(bookingRepository.findFirstByBookerIdEqualsAndItemIdEqualsAndEndBefore(
