@@ -145,6 +145,17 @@ public class ItemServiceTest {
     }
 
     @Test
+    void updateItemTest_ifIncorrectRequestId_NotFoundException() {
+        ItemForUpdate testItemDtoUpdate2 = testItemDtoUpdate1;
+        testItemDtoUpdate2.setRequestId(5L);
+        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(user1));
+        when(itemRepository.findById(testItem1.getId())).thenReturn(Optional.ofNullable(testItem1));
+        when(requestRepository.findById(5L)).thenReturn(Optional.empty());
+
+        assertThrows(ValidationException.class, () -> itemService.updateItem(testItemDtoUpdate2, testItem1.getId(), 1));
+    }
+
+    @Test
     void getItemTest_ifOk_returnItemCommentDto() {
         long itemId = 1;
         long userId = 1;
