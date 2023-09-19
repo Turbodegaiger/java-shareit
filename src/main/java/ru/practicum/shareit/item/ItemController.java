@@ -27,6 +27,7 @@ public class ItemController {
     public ItemDto createItem(@Valid @RequestBody ItemDto item,
                               @RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на создание itemId.");
+
         return itemService.createItem(item, userId);
     }
 
