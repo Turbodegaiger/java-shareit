@@ -8,6 +8,7 @@ import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserForUpdateDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -21,13 +22,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private final UserRepository repository;
 
-    public UserDto createUser(User user) {
+    public UserDto createUser(UserDto user) {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.info("Невозможно создать пользователя {}, некорректный email.", user.getName());
             throw new ValidationException(
                     String.format("Невозможно создать пользователя %s, некорректный email.", user.getName()));
         }
-        User newUser = repository.save(user);
+        User newUser = repository.save(UserMapper.mapToNewUser(user));
         log.info("Создан пользователь {}.", newUser);
         return UserMapper.mapToUserDto(newUser);
     }
@@ -41,9 +42,10 @@ public class UserServiceImpl implements UserService {
         log.info("Пользователь с id = {} удалён.", userId);
     }
 
-    public UserDto updateUser(User user, long userId) {
+    public UserDto updateUser(UserForUpdateDto userUpdate, long userId) {
         User oldUser = repository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Невозможно обновить. Пользователь с id = " + userId + " не найден."));
+        UserDto user = UserMapper.mapToUser(userUpdate, userId);
         if (user.getEmail() != null && !user.getEmail().equals(oldUser.getEmail())) {
             User sameEmailUser = repository.findByEmailEquals(user.getEmail());
             if (sameEmailUser != null) {
@@ -59,7 +61,7 @@ public class UserServiceImpl implements UserService {
         if (user.getEmail() == null) {
             user.setEmail(oldUser.getEmail());
         }
-        User updatedUser = repository.save(user);
+        User updatedUser = repository.save(UserMapper.mapToNewUser(user));
         log.info("Пользователь обновлён {}.", updatedUser);
         return UserMapper.mapToUserDto(updatedUser);
     }

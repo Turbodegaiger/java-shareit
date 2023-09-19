@@ -20,7 +20,7 @@ public class CommentMapper {
                 comment.getText(),
                 comment.getItem().getId(),
                 comment.getAuthor().getName(),
-                comment.getCreated().toString());
+                comment.getCreated().plusSeconds(1).toString());
     }
 
     public static List<CommentDto> toCommentDto(Iterable<Comment> comments) {
@@ -31,12 +31,12 @@ public class CommentMapper {
         return commentDtoList;
     }
 
-    public static Comment toComment(CommentDto commentDto) {
+    public static Comment toComment(CommentDto commentDto, Item item, User user, LocalDateTime dateTime) {
         return new Comment(
                 commentDto.getId(),
                 commentDto.getText(),
-                new Item(),
-                new User(),
-                LocalDateTime.now());
+                item,
+                user,
+                dateTime);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemForUpdate;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -21,8 +22,8 @@ public class ItemController {
     @Autowired
     private final ItemService itemService;
 
-    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
     public ItemDto createItem(@Valid @RequestBody ItemDto item,
                               @RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на создание itemId.");
@@ -31,7 +32,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDto updateItem(@RequestBody ItemDto item,
+    public ItemDto updateItem(@RequestBody @Valid ItemForUpdate item,
                               @PathVariable long itemId,
                               @RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на изменения itemId id = {}.", itemId);
@@ -42,21 +43,27 @@ public class ItemController {
     @ResponseStatus(HttpStatus.OK)
     public ItemCommentDto getItem(@PathVariable long itemId, @RequestHeader(userIdHeader) long userId) {
         log.info("Принят запрос на получение itemId id = {}.", itemId);
-        return itemService.getItem(itemId, userId);
+        ItemCommentDto returnValue = itemService.getItem(itemId, userId);
+        log.info("Отправлен ответ на запрос item id = {}. Тело ответа: {}", itemId, returnValue);
+        return returnValue;
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemCommentDto> getItems(@RequestHeader(userIdHeader) long userId) {
+    public List<ItemCommentDto> getItems(@RequestHeader(userIdHeader) long userId,
+                                         @RequestParam(defaultValue = "0", required = false) int from,
+                                         @RequestParam(defaultValue = "10", required = false) int size) {
         log.info("Принят запрос на получение всех itemId для пользователя {}.", userId);
-        return itemService.getItems(userId);
+        return itemService.getItems(userId, from, size);
     }
 
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> searchItems(@RequestParam String text) {
+    public List<ItemDto> searchItems(@RequestParam String text,
+                                     @RequestParam(defaultValue = "0", required = false) int from,
+                                     @RequestParam(defaultValue = "10", required = false) int size) {
         log.info("Принят запрос на поиск itemId, где название или описание содержит '{}'", text);
-        return itemService.searchItems(text);
+        return itemService.searchItems(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

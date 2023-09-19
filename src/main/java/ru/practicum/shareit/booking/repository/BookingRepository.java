@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.shareit.booking.enums.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
@@ -7,25 +9,33 @@ import ru.practicum.shareit.booking.model.Booking;
 import java.time.LocalDateTime;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    Iterable<Booking> findAllByBookerIdEqualsOrderByStartDesc(long userId);
+    Page<Booking> findAllByBookerIdEquals(long userId, Pageable pageable);
 
-    Iterable<Booking> findAllByBookerIdEqualsAndStatusEqualsOrderByStartDesc(long userId, BookingStatus state);
+    Page<Booking> findAllByBookerIdEqualsAndStatusEquals(
+            long userId, BookingStatus state, Pageable pageable);
 
-    Iterable<Booking> findAllByBookerIdEqualsAndStartAfterOrderByStartDesc(long userId, LocalDateTime currentTime);
+    Page<Booking> findAllByBookerIdEqualsAndStartAfter(
+            long userId, LocalDateTime currentTime, Pageable pageable);
 
-    Iterable<Booking> findAllByBookerIdEqualsAndEndBeforeOrderByStartDesc(long userId, LocalDateTime currentTime);
+    Page<Booking> findAllByBookerIdEqualsAndEndBefore(
+            long userId, LocalDateTime currentTime, Pageable pageable);
 
-    Iterable<Booking> findAllByBookerIdEqualsAndStartBeforeAndEndAfterOrderByStartDesc(long userId, LocalDateTime currentTime, LocalDateTime currentTime1);
+    Page<Booking> findAllByBookerIdEqualsAndStartBeforeAndEndAfter(
+            long userId, LocalDateTime currentTime, LocalDateTime currentTime1, Pageable pageable);
 
-    Iterable<Booking> findAllByItemOwnerIdEqualsAndStatusEqualsOrderByStartDesc(long userId, BookingStatus state);
+    Page<Booking> findAllByItemOwnerIdEqualsAndStatusEquals(
+            long userId, BookingStatus state, Pageable pageable);
 
-    Iterable<Booking> findAllByItemOwnerIdEqualsAndStartAfterOrderByStartDesc(long userId, LocalDateTime currentTime);
+    Page<Booking> findAllByItemOwnerIdEqualsAndStartAfter(
+            long userId, LocalDateTime currentTime, Pageable pageable);
 
-    Iterable<Booking> findAllByItemOwnerIdEqualsAndEndBeforeOrderByStartDesc(long userId, LocalDateTime currentTime);
+    Page<Booking> findAllByItemOwnerIdEqualsAndEndBefore(
+            long userId, LocalDateTime currentTime, Pageable pageable);
 
-    Iterable<Booking> findAllByItemOwnerIdEqualsAndStartBeforeAndEndAfterOrderByStartDesc(long userId, LocalDateTime currentTime, LocalDateTime currentTime1);
+    Page<Booking> findAllByItemOwnerIdEqualsAndStartBeforeAndEndAfter(
+            long userId, LocalDateTime currentTime, LocalDateTime currentTime1, Pageable pageable);
 
-    Iterable<Booking> findAllByItemOwnerIdEqualsOrderByStartDesc(long userId);
+    Page<Booking> findAllByItemOwnerIdEquals(long userId, Pageable pageable);
 
     Booking findFirstByItemIdEqualsAndStatusIsNotAndStartBeforeOrderByStartDesc(Long id, BookingStatus status, LocalDateTime now);
 

@@ -51,6 +51,7 @@ public class ErrorHandler {
         if (exception.getMessage() == null) {
             return new ErrorResponse("Произошла непредвиденная ошибка.");
         }
+        log.info(exception.toString());
         return new ErrorResponse(exception.getMessage());
     }
 
@@ -72,6 +73,6 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleDataIntegrityViolation(final DataIntegrityViolationException exception) {
         log.info("При проверке полученных данных возникла ошибка: {}", exception.getMessage());
-        return new ErrorResponse("Присланные данные не прошли проверку, проверьте содержимое запроса.");
+        return new ErrorResponse("Присланные данные не прошли проверку, проверьте содержимое запроса." + exception.getCause() + exception.getRootCause());
     }
 }
