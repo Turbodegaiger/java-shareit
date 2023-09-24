@@ -17,7 +17,7 @@ import javax.validation.Valid;
 public class UserController {
     private final UserClient userClient;
     private final String userIdHeader = "X-Sharer-User-Id";
-    
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto user) {
