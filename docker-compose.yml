@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  shareit-gateway:
+  gateway:
     build: shareit-gateway
     image: shareit-gateway-image
     container_name: shareit-gateway-container
@@ -10,12 +10,12 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     depends_on:
-      - shareit-server
+      - server
     environment:
-      - SHAREIT_SERVER_URL=http://shareit-server:9090
+      - SHAREIT_SERVER_URL=http://server:9090
       - TZ=Europe/Moscow
 
-  shareit-server:
+  server:
     build: shareit-server
     image: shareit-server-image
     container_name: shareit-server-container
