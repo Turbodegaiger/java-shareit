@@ -1,33 +1,49 @@
 version: '3.8'
 services:
-  gateway:
+  shareit-gateway:
     build: shareit-gateway
     image: shareit-gateway-image
     container_name: shareit-gateway-container
     ports:
       - "8080:8080"
-    depends_on: server
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - shareit-server
     environment:
-      - SHAREIT_SERVER_URL=http://server:9090
+      - SHAREIT_SERVER_URL=http://shareit-server:9090
+      - TZ=Europe/Moscow
 
-  server:
+  shareit-server:
     build: shareit-server
     image: shareit-server-image
     container_name: shareit-server-container
     ports:
       - "9090:9090"
-    depends_on: db
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
       - SPRING_DATASOURCE_USERNAME=tbdggr
       - SPRING_DATASOURCE_PASSWORD=121065
       - SPRING_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - TZ=Europe/Moscow
 
   db:
-    image: shareit-db-image
+    image: postgres:14-alpine
     container_name: shareit-db-container
     ports:
       - "6541:5432"
+    volumes:
+        - .:/docker-entrypoint-initdb.d
+        - /etc/timezone:/etc/timezone:ro
+        - /etc/localtime:/etc/localtime:ro
     environment:
+      - POSTGRES_DB=shareit
       - POSTGRES_PASSWORD=121065
       - POSTGRES_USER=tbdggr
+      - TZ=Europe/Moscow
