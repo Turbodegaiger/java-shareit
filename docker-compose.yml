@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   gateway:
-    build: shareit-gateway
+    build: gateway
     image: shareit-gateway-image
     container_name: shareit-gateway-container
     ports:
@@ -12,11 +12,11 @@ services:
     depends_on:
       - server
     environment:
-      - SHAREIT_SERVER_URL=http://server:9090
+      - SERVER_URL=http://server:9090
       - TZ=Europe/Moscow
 
   server:
-    build: shareit-server
+    build: server
     image: shareit-server-image
     container_name: shareit-server-container
     ports:
